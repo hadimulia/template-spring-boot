@@ -1,12 +1,16 @@
 package com.template.service.permission;
 
+import com.template.dto.PageResult;
+import com.template.dto.PermissionRequest;
 import com.template.dto.PermissionResponse;
 import com.template.entity.Permission;
 import com.template.mapper.PermissionMapper;
 import com.template.service.generic.GenericServiceImpl;
+import com.template.util.SecurityUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -19,6 +23,59 @@ public class PermissionServiceImpl extends GenericServiceImpl<Permission, Long> 
     public PermissionServiceImpl(PermissionMapper permissionMapper) {
         super(permissionMapper);
         this.permissionMapper = permissionMapper;
+    }
+
+    @Transactional(readOnly = true)
+    public PageResult<PermissionResponse> findAll(String keyword, int page, int size) {
+        int offset = (page - 1) * size;
+        List<PermissionResponse> data = permissionMapper.findAll(keyword, offset, size);
+        int total = permissionMapper.countAll(keyword);
+        return PageResult.of(data, total, page, size);
+    }
+
+    public void create(PermissionRequest request) {
+        Permission permission = new Permission();
+        permission.setCode(request.getCode());
+        permission.setDescription(request.getDescription());
+        permission.setCreatedBy(SecurityUtils.getCurrentUsername());
+        permission.setCreatedDate(LocalDateTime.now());
+        permission.setDeleted(false);
+        permission.setVersion(0);
+        save(permission);
+    }
+
+    public void update(PermissionRequest request) {
+        Permission permission = get(request.getId());
+        if (permission != null) {
+            permission.setCode(request.getCode());
+            permission.setDescription(request.getDescription());
+            permission.setUpdatedBy(SecurityUtils.getCurrentUsername());
+            permission.setUpdatedDate(LocalDateTime.now());
+            save(permission);
+        }
+    }
+
+    public void delete(Long id) {
+        Permission permission = get(id);
+        if (permission != null) {
+            permission.setDeleted(true);
+            permission.setUpdatedBy(SecurityUtils.getCurrentUsername());
+            permission.setUpdatedDate(LocalDateTime.now());
+            save(permission);
+        }
+    }
+
+    @Transactional(readOnly = true)
+    public PermissionResponse getById(Long id) {
+        Permission permission = get(id);
+        if (permission == null || Boolean.TRUE.equals(permission.getDeleted())) return null;
+
+        return PermissionResponse.builder()
+                .id(permission.getId())
+                .code(permission.getCode())
+                .description(permission.getDescription())
+                .createdDate(permission.getCreatedDate())
+                .build();
     }
 
     @Transactional(readOnly = true)

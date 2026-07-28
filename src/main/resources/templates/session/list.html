@@ -49,8 +49,12 @@
                         <td>
                             <form th:if="${!s.currentSession}" th:action="@{/sessions/force-logout}" method="post" style="display:inline;">
                                 <input type="hidden" name="sessionId" th:value="${s.sessionId}">
-                                <button type="submit" class="btn btn-danger btn-sm"
-                                        onclick="return confirm('Force logout this session?')">
+                                <button type="button" class="btn btn-danger btn-sm"
+                                        data-bs-toggle="modal" data-bs-target="#confirmModal"
+                                        data-modal-title="Force Logout"
+                                        data-modal-body="Are you sure you want to force logout this session?"
+                                        data-modal-btn="Kick"
+                                        data-modal-btn-class="btn btn-danger">
                                     <i class="bi bi-x-circle"></i> Kick
                                 </button>
                             </form>

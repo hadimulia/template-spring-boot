@@ -33,8 +33,12 @@
                         <td><span th:if="${menu.visible}" class="badge bg-success">Yes</span><span th:unless="${menu.visible}" class="badge bg-danger">No</span></td>
                         <td>
                             <a th:if="${#authorization.expression('hasAuthority(''MENU_EDIT'')')}" th:href="@{/menus/{id}/edit(id=${menu.id})}" class="btn btn-sm btn-warning"><i class="bi bi-pencil"></i></a>
-                            <form th:if="${#authorization.expression('hasAuthority(''MENU_DELETE'')')}" th:action="@{/menus/{id}/delete(id=${menu.id})}" method="post" class="d-inline" onsubmit="return confirm('Delete this menu?')">
-                                <button type="submit" class="btn btn-sm btn-danger"><i class="bi bi-trash"></i></button>
+                            <form th:if="${#authorization.expression('hasAuthority(''MENU_DELETE'')')}" th:action="@{/menus/{id}/delete(id=${menu.id})}" method="post" class="d-inline">
+                                <button type="button" class="btn btn-sm btn-danger"
+                                        data-bs-toggle="modal" data-bs-target="#confirmModal"
+                                        data-modal-title="Delete Menu"
+                                        data-modal-body="Are you sure you want to delete this menu?"
+                                        data-modal-btn="Delete"><i class="bi bi-trash"></i></button>
                             </form>
                         </td>
                     </tr>

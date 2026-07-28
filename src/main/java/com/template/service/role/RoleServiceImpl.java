@@ -140,6 +140,7 @@ public class RoleServiceImpl extends GenericServiceImpl<Role, Long> implements R
             role.setUpdatedDate(LocalDateTime.now());
             save(role);
         }
+        
     }
 
     @Transactional(readOnly = true)
@@ -150,6 +151,7 @@ public class RoleServiceImpl extends GenericServiceImpl<Role, Long> implements R
         List<Long> permissionIds = rolePermissionMapper.findPermissionIdsByRoleId(id);
         List<Long> menuIds = roleMenuMapper.findMenuIdsByRoleId(id);
 
+        
         return RoleResponse.builder()
                 .id(role.getId())
                 .name(role.getName())

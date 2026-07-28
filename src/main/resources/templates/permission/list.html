@@ -6,8 +6,11 @@
 <body>
 <div layout:fragment="content">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h4 class="mb-0">Permission List</h4>
+        <h4 class="mb-0">Permission Management</h4>
+        <a th:if="${#authorization.expression('hasAuthority(''PERMISSION_CREATE'')')}"
+           th:href="@{/permissions/new}" class="btn btn-primary"><i class="bi bi-plus-lg"></i> Add Permission</a>
     </div>
+    <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show"><i class="bi bi-check-circle"></i> <span th:text="${successMessage}"></span><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
     <form th:action="@{/permissions}" method="get" class="mb-3">
         <div class="input-group">
             <input type="text" name="keyword" class="form-control" th:value="${keyword}" placeholder="Search permissions...">
@@ -18,14 +21,24 @@
     <div class="card">
         <div class="card-body p-0">
             <table class="table table-hover mb-0">
-                <thead><tr><th>#</th><th>Code</th><th>Description</th></tr></thead>
+                <thead><tr><th>#</th><th>Code</th><th>Description</th><th>Actions</th></tr></thead>
                 <tbody>
                     <tr th:each="perm, stat : ${permissions}">
                         <td th:text="${(pagination.currentPage - 1) * pagination.pageSize + stat.index + 1}"></td>
                         <td><code th:text="${perm.code}"></code></td>
                         <td th:text="${perm.description}"></td>
+                        <td>
+                            <a th:if="${#authorization.expression('hasAuthority(''PERMISSION_EDIT'')')}" th:href="@{/permissions/{id}/edit(id=${perm.id})}" class="btn btn-sm btn-warning"><i class="bi bi-pencil"></i></a>
+                            <form th:if="${#authorization.expression('hasAuthority(''PERMISSION_DELETE'')')}" th:action="@{/permissions/{id}/delete(id=${perm.id})}" method="post" class="d-inline">
+                                <button type="button" class="btn btn-sm btn-danger"
+                                        data-bs-toggle="modal" data-bs-target="#confirmModal"
+                                        data-modal-title="Delete Permission"
+                                        data-modal-body="Are you sure you want to delete this permission?"
+                                        data-modal-btn="Delete"><i class="bi bi-trash"></i></button>
+                            </form>
+                        </td>
                     </tr>
-                    <tr th:if="${#lists.isEmpty(permissions)}"><td colspan="3" class="text-center text-muted py-4">No permissions found</td></tr>
+                    <tr th:if="${#lists.isEmpty(permissions)}"><td colspan="4" class="text-center text-muted py-4">No permissions found</td></tr>
                 </tbody>
             </table>
         </div>
