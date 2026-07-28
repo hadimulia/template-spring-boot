@@ -1,0 +1,178 @@
+package com.template.service.role;
+
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.template.dto.PageResult;
+import com.template.dto.RoleRequest;
+import com.template.dto.RoleResponse;
+import com.template.entity.Role;
+import com.template.entity.RoleMenu;
+import com.template.entity.RolePermission;
+import com.template.mapper.RoleMapper;
+import com.template.mapper.RoleMenuMapper;
+import com.template.mapper.RolePermissionMapper;
+import com.template.service.generic.GenericServiceImpl;
+import com.template.util.SecurityUtils;
+
+@Service
+@Transactional
+public class RoleServiceImpl extends GenericServiceImpl<Role, Long> implements RoleService {
+
+    private final RoleMapper roleMapper;
+    private final RolePermissionMapper rolePermissionMapper;
+    private final RoleMenuMapper roleMenuMapper;
+
+    public RoleServiceImpl(RoleMapper roleMapper,
+                           RolePermissionMapper rolePermissionMapper,
+                           RoleMenuMapper roleMenuMapper) {
+        super(roleMapper);
+        this.roleMapper = roleMapper;
+        this.rolePermissionMapper = rolePermissionMapper;
+        this.roleMenuMapper = roleMenuMapper;
+    }
+
+    @Transactional(readOnly = true)
+    public PageResult<RoleResponse> findAll(String keyword, int page, int size) {
+        int offset = (page - 1) * size;
+        List<RoleResponse> data = roleMapper.findAll(keyword, offset, size);
+        int total = roleMapper.countAll(keyword);
+
+        for (RoleResponse role : data) {
+            List<Long> permissionIds = rolePermissionMapper.findPermissionIdsByRoleId(role.getId());
+            role.setPermissionIds(permissionIds);
+            List<Long> menuIds = roleMenuMapper.findMenuIdsByRoleId(role.getId());
+            role.setMenuIds(menuIds);
+        }
+
+        return PageResult.of(data, total, page, size);
+    }
+
+    public void create(RoleRequest request) {
+        Role role = new Role();
+        role.setName(request.getName());
+        role.setDescription(request.getDescription());
+        role.setCreatedBy(SecurityUtils.getCurrentUsername());
+        role.setCreatedDate(LocalDateTime.now());
+        role.setDeleted(false);
+        role.setVersion(0);
+        save(role);
+
+        if (request.getPermissionIds() != null) {
+            for (Long permissionId : request.getPermissionIds()) {
+                RolePermission rp = new RolePermission();
+                rp.setRoleId(role.getId());
+                rp.setPermissionId(permissionId);
+                rp.setCreatedBy(SecurityUtils.getCurrentUsername());
+                rp.setCreatedDate(LocalDateTime.now());
+                rolePermissionMapper.insert(rp);
+            }
+        }
+
+        if (request.getMenuIds() != null) {
+            for (Long menuId : request.getMenuIds()) {
+                RoleMenu rm = new RoleMenu();
+                rm.setRoleId(role.getId());
+                rm.setMenuId(menuId);
+                rm.setCreatedBy(SecurityUtils.getCurrentUsername());
+                rm.setCreatedDate(LocalDateTime.now());
+                roleMenuMapper.insert(rm);
+            }
+        }
+    }
+
+    public void update(Long id, RoleRequest request) {
+        Role role = get(id);
+        if (role != null) {
+            role.setName(request.getName());
+            role.setDescription(request.getDescription());
+            role.setUpdatedBy(SecurityUtils.getCurrentUsername());
+            role.setUpdatedDate(LocalDateTime.now());
+            roleMapper.updateByPrimaryKey(role);
+
+            if (request.getPermissionIds() != null) {
+                List<Long> existingPermIds = rolePermissionMapper.findPermissionIdsByRoleId(id);
+                for (Long permId : existingPermIds) {
+                    RolePermission rp = new RolePermission();
+                    rp.setRoleId(id);
+                    rp.setPermissionId(permId);
+                    rolePermissionMapper.delete(rp);
+                }
+                for (Long permissionId : request.getPermissionIds()) {
+                    RolePermission rp = new RolePermission();
+                    rp.setRoleId(id);
+                    rp.setPermissionId(permissionId);
+                    rp.setCreatedBy(SecurityUtils.getCurrentUsername());
+                    rp.setCreatedDate(LocalDateTime.now());
+                    rolePermissionMapper.insert(rp);
+                }
+            }
+
+            if (request.getMenuIds() != null) {
+                List<Long> existingMenuIds = roleMenuMapper.findMenuIdsByRoleId(id);
+                for (Long menuId : existingMenuIds) {
+                    RoleMenu rm = new RoleMenu();
+                    rm.setRoleId(id);
+                    rm.setMenuId(menuId);
+                    roleMenuMapper.delete(rm);
+                }
+                for (Long menuId : request.getMenuIds()) {
+                    RoleMenu rm = new RoleMenu();
+                    rm.setRoleId(id);
+                    rm.setMenuId(menuId);
+                    rm.setCreatedBy(SecurityUtils.getCurrentUsername());
+                    rm.setCreatedDate(LocalDateTime.now());
+                    roleMenuMapper.insert(rm);
+                }
+            }
+        }
+    }
+
+    public void delete(Long id) {
+        Role role = get(id);
+        if (role != null) {
+            role.setDeleted(true);
+            role.setUpdatedBy(SecurityUtils.getCurrentUsername());
+            role.setUpdatedDate(LocalDateTime.now());
+            save(role);
+        }
+    }
+
+    @Transactional(readOnly = true)
+    public RoleResponse getById(Long id) {
+        Role role = get(id);
+        if (role == null || Boolean.TRUE.equals(role.getDeleted())) return null;
+
+        List<Long> permissionIds = rolePermissionMapper.findPermissionIdsByRoleId(id);
+        List<Long> menuIds = roleMenuMapper.findMenuIdsByRoleId(id);
+
+        return RoleResponse.builder()
+                .id(role.getId())
+                .name(role.getName())
+                .description(role.getDescription())
+                .permissionIds(permissionIds)
+                .menuIds(menuIds)
+                .createdBy(role.getCreatedBy())
+                .createdDate(role.getCreatedDate())
+                .updatedBy(role.getUpdatedBy())
+                .updatedDate(role.getUpdatedDate())
+                .build();
+    }
+
+    @Transactional(readOnly = true)
+    public List<RoleResponse> findAll() {
+        List<Role> roles = getAll().stream()
+                .filter(r -> !Boolean.TRUE.equals(r.getDeleted()))
+                .collect(Collectors.toList());
+
+        return roles.stream().map(r -> RoleResponse.builder()
+                .id(r.getId())
+                .name(r.getName())
+                .description(r.getDescription())
+                .build()).collect(Collectors.toList());
+    }
+}
