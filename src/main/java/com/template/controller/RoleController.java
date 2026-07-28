@@ -36,6 +36,15 @@ public class RoleController {
         return "role/list";
     }
 
+    @GetMapping("/api/list")
+    @PreAuthorize("hasAuthority('ROLE_VIEW')")
+    @ResponseBody
+    public PageResult<RoleResponse> listApi(@RequestParam(defaultValue = "") String keyword,
+                                            @RequestParam(defaultValue = "1") int page,
+                                            @RequestParam(defaultValue = "10") int size) {
+        return roleService.findAll(keyword, page, size);
+    }
+
     @GetMapping("/new")
     @PreAuthorize("hasAuthority('ROLE_CREATE')")
     public String form(Model model) {

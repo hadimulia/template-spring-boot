@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
@@ -37,6 +38,15 @@ public class PermissionController {
         model.addAttribute("pagination", result.getPagination());
         model.addAttribute("keyword", keyword);
         return "permission/list";
+    }
+
+    @GetMapping("/api/list")
+    @PreAuthorize("hasAuthority('PERMISSION_VIEW')")
+    @ResponseBody
+    public PageResult<PermissionResponse> listApi(@RequestParam(defaultValue = "") String keyword,
+                                                  @RequestParam(defaultValue = "1") int page,
+                                                  @RequestParam(defaultValue = "10") int size) {
+        return permissionService.findAll(keyword, page, size);
     }
 
     @GetMapping("/new")

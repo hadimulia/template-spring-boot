@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layout/main :: layout}">
-<head><title>Permission List</title></head>
+<head><title>Permission Management</title></head>
 <body>
 <div layout:fragment="content">
     <div class="d-flex justify-content-between align-items-center mb-4">
@@ -11,18 +11,16 @@
            th:href="@{/permissions/new}" class="btn btn-primary"><i class="bi bi-plus-lg"></i> Add Permission</a>
     </div>
     <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show"><i class="bi bi-check-circle"></i> <span th:text="${successMessage}"></span><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
-    <form th:action="@{/permissions}" method="get" class="mb-3">
-        <div class="input-group">
-            <input type="text" name="keyword" class="form-control" th:value="${keyword}" placeholder="Search permissions...">
-            <button type="submit" class="btn btn-outline-secondary"><i class="bi bi-search"></i> Search</button>
-            <a th:href="@{/permissions}" class="btn btn-outline-secondary"><i class="bi bi-arrow-clockwise"></i> Refresh</a>
-        </div>
-    </form>
+    <div class="mb-3 input-group">
+        <input type="text" id="searchKeyword" class="form-control" th:value="${keyword}" placeholder="Search permissions...">
+        <button type="button" class="btn btn-outline-secondary" id="searchBtn"><i class="bi bi-search"></i> Search</button>
+        <a th:href="@{/permissions}" class="btn btn-outline-secondary" id="refreshBtn"><i class="bi bi-arrow-clockwise"></i> Refresh</a>
+    </div>
     <div class="card">
         <div class="card-body p-0">
-            <table class="table table-hover mb-0">
+            <table class="table table-hover mb-0" id="dataTable">
                 <thead><tr><th>#</th><th>Code</th><th>Description</th><th>Actions</th></tr></thead>
-                <tbody>
+                <tbody id="dataRows">
                     <tr th:each="perm, stat : ${permissions}">
                         <td th:text="${(pagination.currentPage - 1) * pagination.pageSize + stat.index + 1}"></td>
                         <td><code th:text="${perm.code}"></code></td>
@@ -43,13 +41,9 @@
             </table>
         </div>
     </div>
-    <nav th:if="${pagination.totalPages > 1}" class="mt-3">
-        <ul class="pagination justify-content-center">
-            <li class="page-item" th:classappend="${pagination.currentPage == 1} ? 'disabled'"><a class="page-link" th:href="@{/permissions(page=1, keyword=${keyword})}">First</a></li>
-            <li th:each="i : ${#numbers.sequence(pagination.startPage, pagination.endPage)}" class="page-item" th:classappend="${i == pagination.currentPage} ? 'active'"><a class="page-link" th:href="@{/permissions(page=${i}, keyword=${keyword})}" th:text="${i}"></a></li>
-            <li class="page-item" th:classappend="${pagination.currentPage == pagination.totalPages} ? 'disabled'"><a class="page-link" th:href="@{/permissions(page=${pagination.totalPages}, keyword=${keyword})}">Last</a></li>
-        </ul>
-    </nav>
+    <div th:replace="~{fragments/pagination :: pagination}"></div>
+
+<script th:src="@{/js/list-manager.js}"></script>
+<script th:src="@{/js/permissions/data-render.js}"></script>
 </div>
-</body>
 </html>

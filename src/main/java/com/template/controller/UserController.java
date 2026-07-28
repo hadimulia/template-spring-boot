@@ -40,6 +40,15 @@ public class UserController {
         return "user/list";
     }
 
+    @GetMapping("/api/list")
+    @PreAuthorize("hasAuthority('USER_VIEW')")
+    @ResponseBody
+    public PageResult<UserResponse> listApi(@RequestParam(defaultValue = "") String keyword,
+                                            @RequestParam(defaultValue = "1") int page,
+                                            @RequestParam(defaultValue = "10") int size) {
+        return userService.findAll(keyword, page, size);
+    }
+
     @GetMapping("/new")
     @PreAuthorize("hasAuthority('USER_CREATE')")
     public String form(Model model) {
