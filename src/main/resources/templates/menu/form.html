@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/main :: layout}">
+<head><title>Menu Form</title></head>
+<body>
+<div layout:fragment="content">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h4 class="mb-0" th:text="${menu.id != null ? 'Edit Menu' : 'Add Menu'}">Menu Form</h4>
+        <a th:href="@{/menus}" class="btn btn-secondary"><i class="bi bi-arrow-left"></i> Back</a>
+    </div>
+    <div class="card">
+        <div class="card-body">
+            <form th:action="${menu.id != null ? '/menus/' + menu.id : '/menus'}" method="post" th:object="${menu}">
+                <div class="mb-3">
+                    <label for="name" class="form-label">Name <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" th:classappend="${#fields.hasErrors('name')} ? 'is-invalid'" id="name" th:field="*{name}">
+                    <div class="invalid-feedback" th:errors="*{name}">Error</div>
+                </div>
+                <div class="mb-3">
+                    <label for="parentId" class="form-label">Parent Menu</label>
+                    <select class="form-select" id="parentId" th:field="*{parentId}">
+                        <option value="">-- No Parent --</option>
+                        <option th:each="parent : ${parentMenus}" th:value="${parent.id}" th:text="${parent.name}"></option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="url" class="form-label">URL</label>
+                    <input type="text" class="form-control" id="url" th:field="*{url}" placeholder="/example">
+                </div>
+                <div class="mb-3">
+                    <label for="icon" class="form-label">Icon</label>
+                    <input type="text" class="form-control" id="icon" th:field="*{icon}" placeholder="bi bi-example">
+                </div>
+                <div class="mb-3">
+                    <label for="sortOrder" class="form-label">Sort Order</label>
+                    <input type="number" class="form-control" id="sortOrder" th:field="*{sortOrder}">
+                </div>
+                <div class="mb-3 form-check">
+                    <input type="checkbox" class="form-check-input" id="visible" th:field="*{visible}">
+                    <label class="form-check-label" for="visible">Visible</label>
+                </div>
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-primary"><i class="bi bi-save"></i> Save</button>
+                    <a th:href="@{/menus}" class="btn btn-secondary"><i class="bi bi-x-circle"></i> Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+</html>

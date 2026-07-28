@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head></head>
+<body>
+    <nav th:fragment="header" sec:authorize="isAuthenticated()" class="navbar navbar-dark bg-primary px-3 fixed-top">
+        <a class="navbar-brand" th:href="@{/}">
+            <i class="bi bi-grid"></i> Template App
+        </a>
+        <div class="d-flex align-items-center">
+            <span class="text-white me-3">
+                <i class="bi bi-person-circle"></i>
+                <span sec:authentication="name"></span>
+            </span>
+            <form th:action="@{/logout}" method="post" class="m-0">
+                <button type="submit" class="btn btn-outline-light btn-sm">
+                    <i class="bi bi-box-arrow-right"></i> Logout
+                </button>
+            </form>
+        </div>
+    </nav>
+</body>
+</html>

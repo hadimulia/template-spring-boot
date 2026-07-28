@@ -1,0 +1,40 @@
+spring:
+  application:
+    name: template-spring-boot
+  profiles:
+    active: dev
+  datasource:
+    url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/template_db}
+    username: ${DATABASE_USERNAME:postgres}
+    password: ${DATABASE_PASSWORD:postgres}
+    driver-class-name: org.postgresql.Driver
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    baseline-on-migrate: true
+  thymeleaf:
+    cache: false
+    encoding: UTF-8
+    mode: HTML
+    prefix: classpath:/templates/
+    suffix: .html
+  security:
+    user:
+      name: admin
+      password: admin123
+
+mybatis:
+  mapper-locations: classpath:mapper/*.xml
+  type-aliases-package: com.template.entity
+  configuration:
+    map-underscore-to-camel-case: true
+
+mapper:
+  mappers: tk.mybatis.mapper.common.Mapper
+  not-empty: false
+  identity: POSTGRES
+
+logging:
+  level:
+    root: INFO
+    com.template: DEBUG

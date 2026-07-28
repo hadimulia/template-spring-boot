@@ -1,0 +1,9 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head></head>
+<body>
+    <footer th:fragment="footer" sec:authorize="isAuthenticated()" class="bg-dark text-center text-white py-2 footer-bar">
+        <small>&copy; <span th:text="${#dates.createNow().year}">2026</span> Template App. All rights reserved.</small>
+    </footer>
+</body>
+</html>

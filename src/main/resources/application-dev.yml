@@ -1,0 +1,11 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/template_db
+    username: postgres
+    password: postgres
+
+logging:
+  level:
+    org.springframework.web: DEBUG
+    com.template.mapper: TRACE
+    org.springframework.security: DEBUG

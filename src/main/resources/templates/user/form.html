@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/main :: layout}">
+<head>
+    <title>User Form</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h4 class="mb-0" th:text="${user.id != null ? 'Edit User' : 'Add User'}">User Form</h4>
+        <a th:href="@{/users}" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> Back
+        </a>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <form th:action="${user.id != null ? '/users/' + user.id : '/users'}"
+                  method="post" th:object="${user}">
+
+
+                <div class="mb-3">
+                    <label for="username" class="form-label">Username <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control"
+                           th:classappend="${#fields.hasErrors('username')} ? 'is-invalid'"
+                           id="username" th:field="*{username}"
+                           th:disabled="${user.id != null}">
+                    <div class="invalid-feedback" th:errors="*{username}">Error</div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="password" class="form-label">
+                        Password <span th:if="${user.id == null}" class="text-danger">*</span>
+                        <small th:if="${user.id != null}" class="text-muted">(Leave empty to keep current)</small>
+                    </label>
+                    <input type="password" class="form-control"
+                           th:classappend="${#fields.hasErrors('password')} ? 'is-invalid'"
+                           id="password" th:field="*{password}">
+                    <div class="invalid-feedback" th:errors="*{password}">Error</div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="fullname" class="form-label">Full Name <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control"
+                           th:classappend="${#fields.hasErrors('fullname')} ? 'is-invalid'"
+                           id="fullname" th:field="*{fullname}">
+                    <div class="invalid-feedback" th:errors="*{fullname}">Error</div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="email" class="form-label">Email</label>
+                    <input type="email" class="form-control" id="email" th:field="*{email}">
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Roles</label>
+                    <div class="row">
+                        <div th:each="role : ${allRoles}" class="col-md-4 mb-2">
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input"
+                                       th:id="'role-' + ${role.id}"
+                                       th:field="*{roleIds}"
+                                       th:value="${role.id}">
+                                <label class="form-check-label" th:for="'role-' + ${role.id}"
+                                       th:text="${role.name}"></label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div th:if="${user.id != null}" class="mb-3">
+                    <div class="form-check">
+                        <input type="checkbox" class="form-check-input" id="enabled" th:field="*{enabled}">
+                        <label class="form-check-label" for="enabled">Enabled</label>
+                    </div>
+                </div>
+
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-save"></i> Save
+                    </button>
+                    <a th:href="@{/users}" class="btn btn-secondary">
+                        <i class="bi bi-x-circle"></i> Cancel
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+</html>

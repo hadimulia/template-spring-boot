@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/main :: layout}">
+<head><title>Role Form</title></head>
+<body>
+<div layout:fragment="content">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h4 class="mb-0" th:text="${role.id != null ? 'Edit Role' : 'Add Role'}">Role Form</h4>
+        <a th:href="@{/roles}" class="btn btn-secondary"><i class="bi bi-arrow-left"></i> Back</a>
+    </div>
+    <div class="card">
+        <div class="card-body">
+            <form th:action="${role.id != null ? '/roles/' + role.id : '/roles'}" method="post" th:object="${role}">
+                <div class="mb-3">
+                    <label for="name" class="form-label">Name <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" th:classappend="${#fields.hasErrors('name')} ? 'is-invalid'" id="name" th:field="*{name}">
+                    <div class="invalid-feedback" th:errors="*{name}">Error</div>
+                </div>
+                <div class="mb-3">
+                    <label for="description" class="form-label">Description</label>
+                    <textarea class="form-control" id="description" rows="3" th:field="*{description}"></textarea>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Permissions</label>
+                    <div class="row">
+                        <div th:each="perm : ${allPermissions}" class="col-md-3 mb-2">
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" th:id="'perm-' + ${perm.id}" th:field="*{permissionIds}" th:value="${perm.id}">
+                                <label class="form-check-label" th:for="'perm-' + ${perm.id}" th:text="${perm.code}"></label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Menus</label>
+                    <div class="row">
+                        <div th:each="menu : ${allMenus}" class="col-md-3 mb-2">
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" th:id="'menu-' + ${menu.id}" th:field="*{menuIds}" th:value="${menu.id}">
+                                <label class="form-check-label" th:for="'menu-' + ${menu.id}" th:text="${menu.name}"></label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-primary"><i class="bi bi-save"></i> Save</button>
+                    <a th:href="@{/roles}" class="btn btn-secondary"><i class="bi bi-x-circle"></i> Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+</html>

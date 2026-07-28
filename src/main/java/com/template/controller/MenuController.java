@@ -1,0 +1,97 @@
+package com.template.controller;
+
+import com.template.dto.MenuRequest;
+import com.template.dto.MenuResponse;
+import com.template.dto.PageResult;
+import com.template.entity.Menu;
+import com.template.service.MenuService;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.util.List;
+
+@Controller
+@RequestMapping("/menus")
+@RequiredArgsConstructor
+public class MenuController {
+
+    private final MenuService menuService;
+
+    @GetMapping
+    @PreAuthorize("hasAuthority('MENU_VIEW')")
+    public String list(@RequestParam(defaultValue = "") String keyword,
+                       @RequestParam(defaultValue = "1") int page,
+                       @RequestParam(defaultValue = "10") int size,
+                       Model model) {
+        PageResult<MenuResponse> result = menuService.findAll(keyword, page, size);
+        model.addAttribute("menus", result.getData());
+        model.addAttribute("pagination", result.getPagination());
+        model.addAttribute("keyword", keyword);
+        return "menu/list";
+    }
+
+    @GetMapping("/new")
+    @PreAuthorize("hasAuthority('MENU_CREATE')")
+    public String form(Model model) {
+        model.addAttribute("menu", new MenuRequest());
+        model.addAttribute("parentMenus", menuService.findAllMenus());
+        return "menu/form";
+    }
+
+    @PostMapping
+    @PreAuthorize("hasAuthority('MENU_CREATE')")
+    public String save(@Valid @ModelAttribute("menu") MenuRequest request,
+                       BindingResult bindingResult,
+                       Model model,
+                       RedirectAttributes redirectAttributes) {
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("parentMenus", menuService.findAllMenus());
+            return "menu/form";
+        }
+        menuService.create(request);
+        redirectAttributes.addFlashAttribute("successMessage", "Menu saved successfully");
+        return "redirect:/menus";
+    }
+
+    @GetMapping("/{id}/edit")
+    @PreAuthorize("hasAuthority('MENU_EDIT')")
+    public String edit(@PathVariable Long id, Model model) {
+        MenuResponse menu = menuService.getById(id);
+        if (menu == null) {
+            return "redirect:/menus";
+        }
+        model.addAttribute("menu", menu);
+        model.addAttribute("parentMenus", menuService.findAllMenus());
+        return "menu/form";
+    }
+
+    @PostMapping("/{id}")
+    @PreAuthorize("hasAuthority('MENU_EDIT')")
+    public String update(@PathVariable Long id,
+                         @Valid @ModelAttribute("menu") MenuRequest request,
+                         BindingResult bindingResult,
+                         Model model,
+                         RedirectAttributes redirectAttributes) {
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("parentMenus", menuService.findAllMenus());
+            return "menu/form";
+        }
+        menuService.update(id, request);
+        redirectAttributes.addFlashAttribute("successMessage", "Menu updated successfully");
+        return "redirect:/menus";
+    }
+
+    @PostMapping("/{id}/delete")
+    @PreAuthorize("hasAuthority('MENU_DELETE')")
+    public String delete(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        menuService.delete(id);
+        redirectAttributes.addFlashAttribute("successMessage", "Menu deleted successfully");
+        return "redirect:/menus";
+    }
+}

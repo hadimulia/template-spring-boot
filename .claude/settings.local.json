@@ -1,0 +1,28 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git init *)",
+      "Bash(git add *)",
+      "Bash(git commit *)",
+      "Bash(mvn compile *)",
+      "Bash(mvn test *)",
+      "Bash(./mvnw clean *)",
+      "Bash(mvn --version)",
+      "Bash(mvn clean *)",
+      "Bash(mvn spring-boot:run -q)",
+      "Bash(curl -v -c /tmp/cookies.txt -b /tmp/cookies.txt -X POST http://localhost:8080/login -H 'Content-Type: application/x-www-form-urlencoded' -d 'username=admin&password=admin123')",
+      "Bash(pkill -f spring-boot)",
+      "Bash(mvn spring-boot:run)",
+      "Bash(curl -s -b /tmp/cookies10.txt http://localhost:8080/dashboard -o /dev/null -w \"%{http_code}\")",
+      "Bash(curl -s http://localhost:8080/login)",
+      "Bash(pip3 uninstall *)",
+      "Bash(pip3 install *)",
+      "Bash(rm -f /home/taufik/.local/lib/python3.12/site-packages/__editable__*.pth)",
+      "Bash(rm -f /home/taufik/.local/lib/python3.12/site-packages/__editable__*.py)",
+      "Bash(rm -rf /home/taufik/.local/lib/python3.12/site-packages/graphifyy*)",
+      "Bash(python3 *)",
+      "Bash(curl -s -c /tmp/cookies15.txt -X POST http://localhost:8080/login -H 'Content-Type: application/x-www-form-urlencoded' -d 'username=admin&password=admin123' -o /dev/null -w 'login:%{http_code}')",
+      "Bash(curl -s -o /dev/null -w '%{http_code}' -b /tmp/cookies15.txt http://localhost:8080/__TRACKED_VAR__)"
+    ]
+  }
+}
