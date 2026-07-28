@@ -22,8 +22,11 @@ import com.template.service.generic.GenericServiceImpl;
 import com.template.util.MenuTreeBuilder;
 import com.template.util.SecurityUtils;
 
+import groovy.util.logging.Slf4j;
+
 @Service
 @Transactional
+@Slf4j
 public class MenuServiceImpl extends GenericServiceImpl<Menu, Long> implements MenuService{
 
 	private MenuMapper menuMapper;
