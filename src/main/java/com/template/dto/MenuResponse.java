@@ -6,6 +6,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
+import com.template.entity.Menu;
+import com.template.util.SecurityUtils;
+
 @Data
 @Builder
 @NoArgsConstructor
@@ -23,4 +26,18 @@ public class MenuResponse {
     private LocalDateTime createdDate;
     private String updatedBy;
     private LocalDateTime updatedDate;
+    
+    public static MenuResponse of(Menu menu) {
+    	MenuResponse response = new MenuResponse();
+    	response.setParentId(menu.getParentId());
+    	response.setName(menu.getName());
+    	response.setUrl(menu.getUrl());
+    	response.setIcon(menu.getIcon());
+        response.setSortOrder(menu.getSortOrder());
+        response.setVisible(menu.getVisible());
+        response.setCreatedBy(SecurityUtils.getCurrentUsername());
+        response.setCreatedDate(LocalDateTime.now());
+        response.setVisible(menu.getVisible());
+    	return response;
+    }
 }

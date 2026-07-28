@@ -1,4 +1,4 @@
-package com.template.service;
+package com.template.service.permission;
 
 import com.template.dto.PermissionResponse;
 import com.template.entity.Permission;

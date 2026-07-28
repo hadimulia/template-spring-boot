@@ -5,8 +5,9 @@ import com.template.dto.RoleResponse;
 import com.template.dto.UserRequest;
 import com.template.dto.UserResponse;
 import com.template.dto.UserUpdateRequest;
-import com.template.service.RoleService;
-import com.template.service.UserService;
+import com.template.service.role.RoleService;
+import com.template.service.user.UserService;
+
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;

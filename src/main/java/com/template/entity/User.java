@@ -1,11 +1,15 @@
 package com.template.entity;
 
 import javax.persistence.Table;
-import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 import java.time.LocalDateTime;
 
-@Data
+@Getter
+@Setter
+@ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
 @Table(name = "users")
 public class User extends BaseEntity {

@@ -1,7 +1,8 @@
 package com.template.controller;
 
 import com.template.dto.MenuTreeNode;
-import com.template.service.MenuService;
+import com.template.service.menu.MenuServiceImpl;
+
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -13,7 +14,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class BaseController {
 
-    private final MenuService menuService;
+    private final MenuServiceImpl menuService;
 
     @ModelAttribute("currentUri")
     public String getCurrentUri(HttpServletRequest request) {

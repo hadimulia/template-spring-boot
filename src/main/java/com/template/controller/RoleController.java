@@ -1,9 +1,10 @@
 package com.template.controller;
 
 import com.template.dto.*;
-import com.template.service.MenuService;
-import com.template.service.PermissionService;
-import com.template.service.RoleService;
+import com.template.service.menu.MenuServiceImpl;
+import com.template.service.permission.PermissionService;
+import com.template.service.role.RoleService;
+
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -20,7 +21,7 @@ public class RoleController {
 
     private final RoleService roleService;
     private final PermissionService permissionService;
-    private final MenuService menuService;
+    private final MenuServiceImpl menuService;
 
     @GetMapping
     @PreAuthorize("hasAuthority('ROLE_VIEW')")

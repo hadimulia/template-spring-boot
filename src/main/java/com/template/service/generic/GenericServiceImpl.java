@@ -1,4 +1,4 @@
-package com.template.service;
+package com.template.service.generic;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;

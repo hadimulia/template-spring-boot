@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/main :: layout}">
+<head><title>Active Sessions</title></head>
+<body>
+<div layout:fragment="content">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h4 class="mb-0"><i class="bi bi-people"></i> Active Sessions</h4>
+    </div>
+
+    <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show">
+        <span th:text="${successMessage}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+    <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show">
+        <span th:text="${errorMessage}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+
+    <div class="card">
+        <div class="card-body p-0">
+            <table class="table table-hover mb-0">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Username</th>
+                        <th>Full Name</th>
+                        <th>IP Address</th>
+                        <th>Browser</th>
+                        <th>Login Time</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="s, stat : ${sessions}">
+                        <td th:text="${stat.index + 1}"></td>
+                        <td th:text="${s.username}"></td>
+                        <td th:text="${s.fullname}"></td>
+                        <td th:text="${s.ipAddress}"></td>
+                        <td style="max-width: 250px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"
+                            th:text="${s.browser}"></td>
+                        <td th:text="${s.loginTime} ? ${#strings.substring(s.loginTime.toString(), 0, 16)} : '-'"></td>
+                        <td>
+                            <span th:if="${s.currentSession}" class="badge bg-success">Current</span>
+                            <span th:unless="${s.currentSession}" class="badge bg-secondary">Active</span>
+                        </td>
+                        <td>
+                            <form th:if="${!s.currentSession}" th:action="@{/sessions/force-logout}" method="post" style="display:inline;">
+                                <input type="hidden" name="sessionId" th:value="${s.sessionId}">
+                                <button type="submit" class="btn btn-danger btn-sm"
+                                        onclick="return confirm('Force logout this session?')">
+                                    <i class="bi bi-x-circle"></i> Kick
+                                </button>
+                            </form>
+                            <span th:if="${s.currentSession}" class="text-muted">—</span>
+                        </td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(sessions)}">
+                        <td colspan="8" class="text-center text-muted py-4">No active sessions</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</body>
+</html>

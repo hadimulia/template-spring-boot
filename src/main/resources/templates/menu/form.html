@@ -12,6 +12,7 @@
     <div class="card">
         <div class="card-body">
             <form th:action="${menu.id != null ? '/menus/' + menu.id : '/menus'}" method="post" th:object="${menu}">
+            	<input type="text" class="form-control" th:classappend="${#fields.hasErrors('id')} ? 'is-invalid'" id="id" th:field="*{id}" hidden="true">
                 <div class="mb-3">
                     <label for="name" class="form-label">Name <span class="text-danger">*</span></label>
                     <input type="text" class="form-control" th:classappend="${#fields.hasErrors('name')} ? 'is-invalid'" id="name" th:field="*{name}">

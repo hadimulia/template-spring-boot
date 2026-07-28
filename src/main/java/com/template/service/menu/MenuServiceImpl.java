@@ -1,21 +1,4 @@
-package com.template.service;
-
-import com.template.dto.MenuTreeNode;
-import com.template.dto.MenuResponse;
-import com.template.dto.MenuRequest;
-import com.template.dto.PageResult;
-import com.template.entity.Menu;
-import com.template.entity.RoleMenu;
-import com.template.mapper.MenuMapper;
-import com.template.mapper.RoleMenuMapper;
-import com.template.util.MenuTreeBuilder;
-import com.template.util.SecurityUtils;
-import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+package com.template.service.menu;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -23,13 +6,33 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-@Service
-@RequiredArgsConstructor
-@Transactional
-public class MenuService {
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-    private final MenuMapper menuMapper;
-    private final RoleMenuMapper roleMenuMapper;
+import com.template.dto.MenuRequest;
+import com.template.dto.MenuResponse;
+import com.template.dto.MenuTreeNode;
+import com.template.dto.PageResult;
+import com.template.entity.Menu;
+import com.template.mapper.MenuMapper;
+import com.template.service.generic.GenericServiceImpl;
+import com.template.util.MenuTreeBuilder;
+import com.template.util.SecurityUtils;
+
+@Service
+@Transactional
+public class MenuServiceImpl extends GenericServiceImpl<Menu, Long> implements MenuService{
+
+	private MenuMapper menuMapper;
+	
+    public MenuServiceImpl(MenuMapper mapper) {
+		super(mapper);
+		this.menuMapper = mapper;
+	}
+
 
     public List<MenuTreeNode> getMenuTreeForCurrentUser() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -55,7 +58,7 @@ public class MenuService {
         return PageResult.of(data, total, page, size);
     }
 
-    public void create(MenuRequest request) {
+    public MenuResponse create(MenuRequest request) {
         Menu menu = new Menu();
         menu.setParentId(request.getParentId());
         menu.setName(request.getName());
@@ -67,11 +70,12 @@ public class MenuService {
         menu.setCreatedDate(LocalDateTime.now());
         menu.setDeleted(false);
         menu.setVersion(0);
-        menuMapper.insert(menu);
+        menu = save(menu);
+        return MenuResponse.of(menu);
     }
 
-    public void update(Long id, MenuRequest request) {
-        Menu menu = menuMapper.selectByPrimaryKey(id);
+    public void update(MenuRequest request) {
+        Menu menu = get(request.getId());
         if (menu != null) {
             menu.setParentId(request.getParentId());
             menu.setName(request.getName());
@@ -81,22 +85,22 @@ public class MenuService {
             menu.setVisible(request.getVisible());
             menu.setUpdatedBy(SecurityUtils.getCurrentUsername());
             menu.setUpdatedDate(LocalDateTime.now());
-            menuMapper.updateByPrimaryKey(menu);
+            save(menu);
         }
     }
 
     public void delete(Long id) {
-        Menu menu = menuMapper.selectByPrimaryKey(id);
+        Menu menu = get(id);
         if (menu != null) {
             menu.setDeleted(true);
             menu.setUpdatedBy(SecurityUtils.getCurrentUsername());
             menu.setUpdatedDate(LocalDateTime.now());
-            menuMapper.updateByPrimaryKey(menu);
+            save(menu);
         }
     }
 
     public MenuResponse getById(Long id) {
-        Menu menu = menuMapper.selectByPrimaryKey(id);
+        Menu menu = get(id);
         if (menu == null) return null;
 
         return MenuResponse.builder()
@@ -115,7 +119,7 @@ public class MenuService {
     }
 
     public List<Menu> findAllMenus() {
-        return menuMapper.selectAll().stream()
+        return getAll().stream()
                 .filter(m -> !Boolean.TRUE.equals(m.getDeleted()))
                 .collect(Collectors.toList());
     }

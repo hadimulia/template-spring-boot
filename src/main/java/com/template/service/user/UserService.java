@@ -1,4 +1,4 @@
-package com.template.service;
+package com.template.service.user;
 
 import com.template.dto.PageResult;
 import com.template.dto.UserRequest;
