@@ -7,5 +7,6 @@ spring:
 logging:
   level:
     org.springframework.web: INFO
-    com.template.mapper: INFO
+    com.template.mapper: debug
+    com.template.config: debug
     org.springframework.security: INFO

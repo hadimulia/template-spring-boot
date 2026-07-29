@@ -25,7 +25,8 @@
       "Bash(curl -s -o /dev/null -w '%{http_code}' -b /tmp/cookies15.txt http://localhost:8080/__TRACKED_VAR__)",
       "Bash(git checkout *)",
       "Bash(git ls-tree *)",
-      "Bash(git status *)"
+      "Bash(git status *)",
+      "Bash(grep -rn '\\\\${' /home/taufik/claudecode/template-spring-boot/src/main/resources --include=\"*.xml\")"
     ]
   }
 }

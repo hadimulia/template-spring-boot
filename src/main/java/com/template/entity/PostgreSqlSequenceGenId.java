@@ -6,7 +6,7 @@ import tk.mybatis.mapper.genid.GenId;
 
 public class PostgreSqlSequenceGenId implements GenId<Long>{
 
-	/**
+    /**
      * Injected by Spring.
      */
     private static JdbcTemplate jdbcTemplate;
@@ -17,10 +17,12 @@ public class PostgreSqlSequenceGenId implements GenId<Long>{
 
     @Override
     public Long genId(String table, String column) {
+        // Validate table name to prevent SQL injection — only allow alphanumeric and underscores
+        if (table == null || !table.matches("^[a-zA-Z_][a-zA-Z0-9_]*$")) {
+            throw new IllegalArgumentException("Invalid table name: " + table);
+        }
 
-        String sequence = table + "_id_seq";
-
-        String sql = "SELECT nextval('" + sequence + "')";
+        String sql = "SELECT nextval('" + table + "_id_seq')";
 
         return jdbcTemplate.queryForObject(sql, Long.class);
     }
