@@ -5,6 +5,7 @@ import com.template.dto.permission.PermissionRequest;
 import com.template.dto.permission.PermissionResponse;
 import com.template.entity.permission.Permission;
 import com.template.mapper.permission.PermissionMapper;
+import com.template.service.audit.Auditable;
 import com.template.service.generic.GenericServiceImpl;
 import com.template.util.SecurityUtils;
 import org.springframework.stereotype.Service;
@@ -33,6 +34,7 @@ public class PermissionServiceImpl extends GenericServiceImpl<Permission, Long> 
         return PageResult.of(data, total, page, size);
     }
 
+    @Auditable(action = "CREATE", entityType = "PERMISSION", description = "#request.code")
     public void create(PermissionRequest request) {
         Permission permission = new Permission();
         permission.setCode(request.getCode());
@@ -44,6 +46,7 @@ public class PermissionServiceImpl extends GenericServiceImpl<Permission, Long> 
         save(permission);
     }
 
+    @Auditable(action = "UPDATE", entityType = "PERMISSION", description = "#request.code")
     public void update(PermissionRequest request) {
         Permission permission = get(request.getId());
         if (permission != null) {
@@ -55,6 +58,7 @@ public class PermissionServiceImpl extends GenericServiceImpl<Permission, Long> 
         }
     }
 
+    @Auditable(action = "DELETE", entityType = "PERMISSION", description = "")
     public void delete(Long id) {
         Permission permission = get(id);
         if (permission != null) {

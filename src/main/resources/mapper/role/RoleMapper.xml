@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.template.mapper.RoleMapper">
+<mapper namespace="com.template.mapper.role.RoleMapper">
 
-    <resultMap id="RoleResultMap" type="com.template.entity.Role">
+    <resultMap id="RoleResultMap" type="com.template.entity.role.Role">
         <id property="id" column="id"/>
         <result property="name" column="name"/>
         <result property="description" column="description"/>
@@ -20,7 +20,7 @@
         WHERE ur.user_id = #{userId} AND r.deleted = false
     </select>
 
-    <select id="findAll" resultType="com.template.dto.RoleResponse">
+    <select id="findAll" resultType="com.template.dto.role.RoleResponse">
         SELECT r.id, r.name, r.description, r.created_by AS createdBy,
                r.created_date AS createdDate, r.updated_by AS updatedBy, r.updated_date AS updatedDate
         FROM roles r

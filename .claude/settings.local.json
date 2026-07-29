@@ -23,7 +23,9 @@
       "Bash(python3 *)",
       "Bash(curl -s -c /tmp/cookies15.txt -X POST http://localhost:8080/login -H 'Content-Type: application/x-www-form-urlencoded' -d 'username=admin&password=admin123' -o /dev/null -w 'login:%{http_code}')",
       "Bash(curl -s -o /dev/null -w '%{http_code}' -b /tmp/cookies15.txt http://localhost:8080/__TRACKED_VAR__)",
-      "Bash(git checkout *)"
+      "Bash(git checkout *)",
+      "Bash(git ls-tree *)",
+      "Bash(git status *)"
     ]
   }
 }

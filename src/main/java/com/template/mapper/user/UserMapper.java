@@ -11,6 +11,8 @@ public interface UserMapper extends Mapper<User> {
 
     User findByUsername(@Param("username") String username);
 
+    User findByEmail(@Param("email") String email);
+
     List<UserResponse> findAll(@Param("keyword") String keyword,
                                @Param("offset") int offset,
                                @Param("limit") int limit);

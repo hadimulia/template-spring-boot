@@ -9,6 +9,7 @@ import com.template.entity.user.UserRole;
 import com.template.mapper.role.RoleMapper;
 import com.template.mapper.user.UserMapper;
 import com.template.mapper.user.UserRoleMapper;
+import com.template.service.audit.Auditable;
 import com.template.service.generic.GenericServiceImpl;
 import com.template.util.SecurityUtils;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -58,6 +59,7 @@ public class UserServiceImpl extends GenericServiceImpl<User, Long> implements U
         return PageResult.of(data, total, page, size);
     }
 
+    @Auditable(action = "CREATE", entityType = "USER", description = "#request.username")
     public void create(UserRequest request) {
         User user = new User();
         user.setUsername(request.getUsername());
@@ -85,6 +87,7 @@ public class UserServiceImpl extends GenericServiceImpl<User, Long> implements U
         }
     }
 
+    @Auditable(action = "UPDATE", entityType = "USER", description = "#request.username")
     public void update(Long id, UserUpdateRequest request) {
         User user = get(id);
         if (user != null) {
@@ -124,6 +127,7 @@ public class UserServiceImpl extends GenericServiceImpl<User, Long> implements U
         }
     }
 
+    @Auditable(action = "DELETE", entityType = "USER", description = "")
     public void delete(Long id) {
         User user = get(id);
         if (user != null) {
@@ -132,6 +136,16 @@ public class UserServiceImpl extends GenericServiceImpl<User, Long> implements U
             user.setUpdatedDate(LocalDateTime.now());
             userMapper.updateByPrimaryKey(user);
         }
+    }
+
+    @Transactional(readOnly = true)
+    public User getByUsername(String username) {
+        return userMapper.findByUsername(username);
+    }
+
+    @Transactional(readOnly = true)
+    public User getByEmail(String email) {
+        return userMapper.findByEmail(email);
     }
 
     @Transactional(readOnly = true)

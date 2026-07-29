@@ -16,6 +16,7 @@ import com.template.entity.permission.RolePermission;
 import com.template.mapper.role.RoleMapper;
 import com.template.mapper.role.RoleMenuMapper;
 import com.template.mapper.permission.RolePermissionMapper;
+import com.template.service.audit.Auditable;
 import com.template.service.generic.GenericServiceImpl;
 import com.template.util.SecurityUtils;
 
@@ -52,6 +53,7 @@ public class RoleServiceImpl extends GenericServiceImpl<Role, Long> implements R
         return PageResult.of(data, total, page, size);
     }
 
+    @Auditable(action = "CREATE", entityType = "ROLE", description = "#request.name")
     public void create(RoleRequest request) {
         Role role = new Role();
         role.setName(request.getName());
@@ -85,6 +87,7 @@ public class RoleServiceImpl extends GenericServiceImpl<Role, Long> implements R
         }
     }
 
+    @Auditable(action = "UPDATE", entityType = "ROLE", description = "#request.name")
     public void update(Long id, RoleRequest request) {
         Role role = get(id);
         if (role != null) {
@@ -132,6 +135,7 @@ public class RoleServiceImpl extends GenericServiceImpl<Role, Long> implements R
         }
     }
 
+    @Auditable(action = "DELETE", entityType = "ROLE", description = "")
     public void delete(Long id) {
         Role role = get(id);
         if (role != null) {

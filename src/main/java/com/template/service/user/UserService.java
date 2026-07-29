@@ -18,4 +18,8 @@ public interface UserService extends GenericService<User, Long> {
     void delete(Long id);
 
     UserResponse getById(Long id);
+
+    User getByUsername(String username);
+
+    User getByEmail(String email);
 }

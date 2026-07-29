@@ -81,9 +81,15 @@ public class UserController {
         if (user == null) {
             return "redirect:/users";
         }
-        model.addAttribute("user", user);
+        UserUpdateRequest form = new UserUpdateRequest();
+        form.setId(user.getId());
+        form.setUsername(user.getUsername());
+        form.setFullname(user.getFullname());
+        form.setEmail(user.getEmail());
+        form.setEnabled(user.getEnabled());
         List<RoleResponse> roles = roleService.findAll();
         model.addAttribute("allRoles", roles);
+        model.addAttribute("user", form);
         return "user/form";
     }
 

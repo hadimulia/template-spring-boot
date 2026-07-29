@@ -18,6 +18,7 @@ import com.template.dto.menu.MenuTreeNode;
 import com.template.dto.PageResult;
 import com.template.entity.menu.Menu;
 import com.template.mapper.menu.MenuMapper;
+import com.template.service.audit.Auditable;
 import com.template.service.generic.GenericServiceImpl;
 import com.template.util.MenuTreeBuilder;
 import com.template.util.SecurityUtils;
@@ -61,6 +62,7 @@ public class MenuServiceImpl extends GenericServiceImpl<Menu, Long> implements M
         return PageResult.of(data, total, page, size);
     }
 
+    @Auditable(action = "CREATE", entityType = "MENU", description = "#request.name")
     public MenuResponse create(MenuRequest request) {
         Menu menu = new Menu();
         menu.setParentId(request.getParentId());
@@ -77,6 +79,7 @@ public class MenuServiceImpl extends GenericServiceImpl<Menu, Long> implements M
         return MenuResponse.of(menu);
     }
 
+    @Auditable(action = "UPDATE", entityType = "MENU", description = "#request.name")
     public void update(MenuRequest request) {
         Menu menu = get(request.getId());
         if (menu != null) {
@@ -92,6 +95,7 @@ public class MenuServiceImpl extends GenericServiceImpl<Menu, Long> implements M
         }
     }
 
+    @Auditable(action = "DELETE", entityType = "MENU", description = "")
     public void delete(Long id) {
         Menu menu = get(id);
         if (menu != null) {

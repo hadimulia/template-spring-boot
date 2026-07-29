@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.template.mapper.PermissionMapper">
+<mapper namespace="com.template.mapper.permission.PermissionMapper">
 
-    <resultMap id="PermissionResultMap" type="com.template.entity.Permission">
+    <resultMap id="PermissionResultMap" type="com.template.entity.permission.Permission">
         <id property="id" column="id"/>
         <result property="code" column="code"/>
         <result property="description" column="description"/>
@@ -31,7 +31,7 @@
         AND p.deleted = false AND r.deleted = false
     </select>
 
-    <select id="findAll" resultType="com.template.dto.PermissionResponse">
+    <select id="findAll" resultType="com.template.dto.permission.PermissionResponse">
         SELECT p.id, p.code, p.description, p.created_date AS createdDate
         FROM permissions p
         WHERE p.deleted = false

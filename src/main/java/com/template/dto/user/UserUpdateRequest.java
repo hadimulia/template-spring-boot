@@ -1,21 +1,18 @@
 package com.template.dto.user;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
-import lombok.Data;
 import java.util.List;
 
+import com.template.validator.user.ValidUserForm;
+
+import lombok.Data;
+
 @Data
+@ValidUserForm
 public class UserUpdateRequest {
-    @NotBlank(message = "Username is required")
+	private Long id;
     private String username;
-
-    @Size(min = 6, message = "Password must be at least 6 characters")
     private String password;
-
-    @NotBlank(message = "Full name is required")
     private String fullname;
-
     private String email;
 
     private Boolean enabled;
