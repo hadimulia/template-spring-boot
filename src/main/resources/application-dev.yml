@@ -6,6 +6,6 @@ spring:
 
 logging:
   level:
-    org.springframework.web: DEBUG
-    com.template.mapper: TRACE
-    org.springframework.security: DEBUG
+    org.springframework.web: INFO
+    com.template.mapper: INFO
+    org.springframework.security: INFO

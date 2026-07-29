@@ -1,8 +1,8 @@
 package com.template.service.session;
 
-import com.template.dto.SessionInfo;
-import com.template.entity.User;
-import com.template.mapper.UserMapper;
+import com.template.dto.session.SessionInfo;
+import com.template.entity.user.User;
+import com.template.mapper.user.UserMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.session.SessionInformation;
 import org.springframework.security.core.session.SessionRegistry;

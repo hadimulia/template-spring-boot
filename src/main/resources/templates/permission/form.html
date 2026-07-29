@@ -5,6 +5,7 @@
 <head><title>Permission Form</title></head>
 <body>
 <div layout:fragment="content">
+    <div th:replace="~{fragments/breadcrumb :: breadcrumb('Permission')}"></div>
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h4 class="mb-0" th:text="${permission.id != null ? 'Edit Permission' : 'Add Permission'}">Permission Form</h4>
         <a th:href="@{/permissions}" class="btn btn-secondary"><i class="bi bi-arrow-left"></i> Back</a>

@@ -1,0 +1,8 @@
+spring:
+  thymeleaf:
+    cache: true
+
+logging:
+  level:
+    root: WARN
+    com.template: INFO

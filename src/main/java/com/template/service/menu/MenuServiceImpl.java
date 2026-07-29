@@ -12,17 +12,17 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.template.dto.MenuRequest;
-import com.template.dto.MenuResponse;
-import com.template.dto.MenuTreeNode;
+import com.template.dto.menu.MenuRequest;
+import com.template.dto.menu.MenuResponse;
+import com.template.dto.menu.MenuTreeNode;
 import com.template.dto.PageResult;
-import com.template.entity.Menu;
-import com.template.mapper.MenuMapper;
+import com.template.entity.menu.Menu;
+import com.template.mapper.menu.MenuMapper;
 import com.template.service.generic.GenericServiceImpl;
 import com.template.util.MenuTreeBuilder;
 import com.template.util.SecurityUtils;
 
-import groovy.util.logging.Slf4j;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Transactional

@@ -5,18 +5,13 @@
 <head><title>Active Sessions</title></head>
 <body>
 <div layout:fragment="content">
+    <div th:replace="~{fragments/breadcrumb :: breadcrumb('Sessions')}"></div>
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h4 class="mb-0"><i class="bi bi-people"></i> Active Sessions</h4>
     </div>
 
-    <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show">
-        <span th:text="${successMessage}"></span>
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-    </div>
-    <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show">
-        <span th:text="${errorMessage}"></span>
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-    </div>
+    <span id="flashSuccess" th:if="${successMessage}" th:text="${successMessage}" class="d-none"></span>
+    <span id="flashError" th:if="${errorMessage}" th:text="${errorMessage}" class="d-none"></span>
 
     <div class="card">
         <div class="card-body p-0">

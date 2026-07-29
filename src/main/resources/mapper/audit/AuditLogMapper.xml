@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.template.mapper.audit.AuditLogMapper">
+
+    <resultMap id="auditLogResponseMap" type="com.template.dto.audit.AuditLogResponse">
+        <id property="id" column="id"/>
+        <result property="entityType" column="entity_type"/>
+        <result property="entityId" column="entity_id"/>
+        <result property="action" column="action"/>
+        <result property="oldValue" column="old_value"/>
+        <result property="newValue" column="new_value"/>
+        <result property="description" column="description"/>
+        <result property="performedBy" column="performed_by"/>
+        <result property="performedAt" column="performed_at"/>
+        <result property="ipAddress" column="ip_address"/>
+    </resultMap>
+
+    <insert id="insert">
+        INSERT INTO audit_logs (entity_type, entity_id, action, old_value, new_value, description, performed_by, performed_at, ip_address)
+        VALUES (#{entityType}, #{entityId}, #{action}, #{oldValue}, #{newValue}, #{description}, #{performedBy}, #{performedAt}, #{ipAddress})
+    </insert>
+
+    <select id="findPage" resultMap="auditLogResponseMap">
+        SELECT * FROM audit_logs
+        <where>
+            <if test="keyword != null and keyword != ''">
+                (entity_type ILIKE '%' || #{keyword} || '%'
+                OR action ILIKE '%' || #{keyword} || '%'
+                OR performed_by ILIKE '%' || #{keyword} || '%'
+                OR description ILIKE '%' || #{keyword} || '%')
+            </if>
+        </where>
+        ORDER BY performed_at DESC
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+
+    <select id="countPage" resultType="int">
+        SELECT COUNT(*) FROM audit_logs
+        <where>
+            <if test="keyword != null and keyword != ''">
+                (entity_type ILIKE '%' || #{keyword} || '%'
+                OR action ILIKE '%' || #{keyword} || '%'
+                OR performed_by ILIKE '%' || #{keyword} || '%'
+                OR description ILIKE '%' || #{keyword} || '%')
+            </if>
+        </where>
+    </select>
+
+</mapper>

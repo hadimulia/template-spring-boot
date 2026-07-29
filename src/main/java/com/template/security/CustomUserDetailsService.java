@@ -1,12 +1,9 @@
 package com.template.security;
 
-import com.template.entity.Permission;
-import com.template.entity.Role;
-import com.template.entity.User;
-import com.template.mapper.PermissionMapper;
-import com.template.mapper.RoleMapper;
-import com.template.mapper.UserMapper;
-import lombok.RequiredArgsConstructor;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.LockedException;
 import org.springframework.security.core.GrantedAuthority;
@@ -17,10 +14,14 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import com.template.entity.permission.Permission;
+import com.template.entity.role.Role;
+import com.template.entity.user.User;
+import com.template.mapper.permission.PermissionMapper;
+import com.template.mapper.role.RoleMapper;
+import com.template.mapper.user.UserMapper;
+
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor

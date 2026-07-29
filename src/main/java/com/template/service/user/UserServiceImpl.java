@@ -1,14 +1,14 @@
 package com.template.service.user;
 
 import com.template.dto.PageResult;
-import com.template.dto.UserRequest;
-import com.template.dto.UserResponse;
-import com.template.dto.UserUpdateRequest;
-import com.template.entity.User;
-import com.template.entity.UserRole;
-import com.template.mapper.RoleMapper;
-import com.template.mapper.UserMapper;
-import com.template.mapper.UserRoleMapper;
+import com.template.dto.user.UserRequest;
+import com.template.dto.user.UserResponse;
+import com.template.dto.user.UserUpdateRequest;
+import com.template.entity.user.User;
+import com.template.entity.user.UserRole;
+import com.template.mapper.role.RoleMapper;
+import com.template.mapper.user.UserMapper;
+import com.template.mapper.user.UserRoleMapper;
 import com.template.service.generic.GenericServiceImpl;
 import com.template.util.SecurityUtils;
 import org.springframework.security.crypto.password.PasswordEncoder;

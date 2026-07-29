@@ -6,7 +6,11 @@ body {
 .main-container {
     margin-top: 56px;
 }
-
+input[readonly] {
+    background-color: #e9ecef;
+    color: #6c757d;
+    cursor: not-allowed;
+}
 .sidebar-col {
     position: fixed;
     left: 0;

@@ -5,6 +5,7 @@
 <head><title>Menu Form</title></head>
 <body>
 <div layout:fragment="content">
+    <div th:replace="~{fragments/breadcrumb :: breadcrumb('Menu')}"></div>
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h4 class="mb-0" th:text="${menu.id != null ? 'Edit Menu' : 'Add Menu'}">Menu Form</h4>
         <a th:href="@{/menus}" class="btn btn-secondary"><i class="bi bi-arrow-left"></i> Back</a>

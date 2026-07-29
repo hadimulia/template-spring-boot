@@ -1,8 +1,11 @@
 package com.template.util;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 public class SecurityUtils {
 
@@ -13,5 +16,24 @@ public class SecurityUtils {
             return auth.getName();
         }
         return "system";
+    }
+
+    public static String getCurrentIpAddress() {
+        ServletRequestAttributes attrs = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+        if (attrs != null) {
+            HttpServletRequest request = attrs.getRequest();
+            String ip = request.getHeader("X-Forwarded-For");
+            if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
+                ip = request.getHeader("Proxy-Client-IP");
+            }
+            if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
+                ip = request.getHeader("WL-Proxy-Client-IP");
+            }
+            if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
+                ip = request.getRemoteAddr();
+            }
+            return ip;
+        }
+        return "unknown";
     }
 }

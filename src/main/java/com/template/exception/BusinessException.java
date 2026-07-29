@@ -4,7 +4,8 @@ import lombok.Getter;
 
 @Getter
 public class BusinessException extends RuntimeException {
-    private final String redirectUrl;
+    private static final long serialVersionUID = 2549338219079842523L;
+	private final String redirectUrl;
 
     public BusinessException(String message) {
         super(message);

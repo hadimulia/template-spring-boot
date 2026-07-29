@@ -1,9 +1,9 @@
 package com.template.service.role;
 
 import com.template.dto.PageResult;
-import com.template.dto.RoleRequest;
-import com.template.dto.RoleResponse;
-import com.template.entity.Role;
+import com.template.dto.role.RoleRequest;
+import com.template.dto.role.RoleResponse;
+import com.template.entity.role.Role;
 import com.template.service.generic.GenericService;
 
 import java.util.List;

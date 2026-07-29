@@ -5,6 +5,7 @@
 <head><title>Role Form</title></head>
 <body>
 <div layout:fragment="content">
+    <div th:replace="~{fragments/breadcrumb :: breadcrumb('Role')}"></div>
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h4 class="mb-0" th:text="${role.id != null ? 'Edit Role' : 'Add Role'}">Role Form</h4>
         <a th:href="@{/roles}" class="btn btn-secondary"><i class="bi bi-arrow-left"></i> Back</a>

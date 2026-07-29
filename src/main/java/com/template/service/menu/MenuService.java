@@ -2,11 +2,11 @@ package com.template.service.menu;
 
 import java.util.List;
 
-import com.template.dto.MenuRequest;
-import com.template.dto.MenuResponse;
-import com.template.dto.MenuTreeNode;
+import com.template.dto.menu.MenuRequest;
+import com.template.dto.menu.MenuResponse;
+import com.template.dto.menu.MenuTreeNode;
 import com.template.dto.PageResult;
-import com.template.entity.Menu;
+import com.template.entity.menu.Menu;
 import com.template.service.generic.GenericService;
 
 public interface MenuService extends GenericService<Menu, Long>{

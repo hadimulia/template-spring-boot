@@ -1,6 +1,6 @@
 package com.template.controller;
 
-import com.template.dto.MenuTreeNode;
+import com.template.dto.menu.MenuTreeNode;
 import com.template.service.menu.MenuServiceImpl;
 
 import jakarta.servlet.http.HttpServletRequest;

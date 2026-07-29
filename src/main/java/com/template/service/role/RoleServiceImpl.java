@@ -8,14 +8,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.template.dto.PageResult;
-import com.template.dto.RoleRequest;
-import com.template.dto.RoleResponse;
-import com.template.entity.Role;
-import com.template.entity.RoleMenu;
-import com.template.entity.RolePermission;
-import com.template.mapper.RoleMapper;
-import com.template.mapper.RoleMenuMapper;
-import com.template.mapper.RolePermissionMapper;
+import com.template.dto.role.RoleRequest;
+import com.template.dto.role.RoleResponse;
+import com.template.entity.role.Role;
+import com.template.entity.role.RoleMenu;
+import com.template.entity.permission.RolePermission;
+import com.template.mapper.role.RoleMapper;
+import com.template.mapper.role.RoleMenuMapper;
+import com.template.mapper.permission.RolePermissionMapper;
 import com.template.service.generic.GenericServiceImpl;
 import com.template.util.SecurityUtils;
 
