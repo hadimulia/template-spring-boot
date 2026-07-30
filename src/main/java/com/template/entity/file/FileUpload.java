@@ -1,8 +1,7 @@
 package com.template.entity.file;
 
-import java.time.LocalDateTime;
+import com.template.entity.BaseEntity;
 
-import javax.persistence.Id;
 import javax.persistence.Table;
 
 import lombok.EqualsAndHashCode;
@@ -12,18 +11,14 @@ import lombok.ToString;
 
 @Getter
 @Setter
-@ToString
-@EqualsAndHashCode
+@ToString(callSuper = true)
+@EqualsAndHashCode(callSuper = true)
 @Table(name = "file_uploads")
-public class FileUpload {
-    @Id
-    private Long id;
+public class FileUpload extends BaseEntity {
     private String originalName;
     private String storedName;
     private String contentType;
     private Long fileSize;
     private String entityType;
     private Long entityId;
-    private String createdBy;
-    private LocalDateTime createdDate;
 }

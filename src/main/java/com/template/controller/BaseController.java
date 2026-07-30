@@ -29,23 +29,14 @@ public class BaseController {
         return tree;
     }
 
-    private boolean markActive(List<MenuTreeNode> nodes, String currentUri) {
-        boolean anyActive = false;
+    private void markActive(List<MenuTreeNode> nodes, String currentUri) {
         for (MenuTreeNode node : nodes) {
-            // Leaf menu: active if URL matches current URI
-            if (node.getUrl() != null && currentUri.startsWith(node.getUrl())) {
-                node.setActive(true);
-                anyActive = true;
-            }
-            // Parent menu: active if any child is active
+            boolean isActive = node.getUrl() != null && currentUri.startsWith(node.getUrl());
             if (node.getChildren() != null && !node.getChildren().isEmpty()) {
-                boolean childActive = markActive(node.getChildren(), currentUri);
-                if (childActive) {
-                    node.setActive(true);
-                    anyActive = true;
-                }
+                markActive(node.getChildren(), currentUri);
+                isActive = isActive || node.getChildren().stream().anyMatch(MenuTreeNode::isActive);
             }
+            node.setActive(isActive);
         }
-        return anyActive;
     }
 }

@@ -37,7 +37,12 @@
       "mcp__plugin_playwright_playwright__browser_console_messages",
       "Bash(grep -v 'bi-\\\\|layout:\\\\|sec:\\\\|th:field\\\\|th:if\\\\|\\\\${')",
       "Bash(curl -s -c /tmp/cookies.txt -b /tmp/cookies.txt http://localhost:8080/login)",
-      "Bash(curl *)"
+      "Bash(curl *)",
+      "Bash(pkill -f \"spring-boot:run\")",
+      "Bash(docker exec postgres *)",
+      "Bash(grep -v '^--$')",
+      "mcp__plugin_playwright_playwright__browser_fill_form",
+      "Bash(pkill -f \"spring-boot\")"
     ]
   }
 }

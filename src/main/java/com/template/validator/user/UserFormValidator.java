@@ -4,6 +4,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 
 import com.template.dto.user.UserUpdateRequest;
+import com.template.entity.user.User;
 import com.template.service.user.UserService;
 
 import jakarta.validation.ConstraintValidator;
@@ -24,6 +25,7 @@ public class UserFormValidator implements ConstraintValidator<ValidUserForm, Use
         boolean valid = true;
 
         context.disableDefaultConstraintViolation();
+        User user = userService.get(form.getId());
 
         // password required for create
         if (
@@ -37,14 +39,15 @@ public class UserFormValidator implements ConstraintValidator<ValidUserForm, Use
         }
 
         // email exists
-        if (!ObjectUtils.isEmpty(form.getEmail()) && !ObjectUtils.isEmpty(userService.getByEmail(form.getEmail()))) {
-
-            context.buildConstraintViolationWithTemplate("Email already exists")
-                    .addPropertyNode("email")
-                    .addConstraintViolation();
-
-            valid = false;
-        }
+			User existingUser = userService.getByEmail(form.getEmail());
+		  if (!ObjectUtils.isEmpty(form.getEmail()) && !ObjectUtils.isEmpty(existingUser) && !existingUser.getId().equals(form.getId())) {
+			  
+		  
+		  context.buildConstraintViolationWithTemplate("Email already exists")
+		  .addPropertyNode("email") .addConstraintViolation();
+		  
+		  valid = false; }
+		 
         
 		if (ObjectUtils.isEmpty(form.getFullname())) {
 

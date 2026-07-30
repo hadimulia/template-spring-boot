@@ -44,7 +44,7 @@ public class MenuServiceImpl extends GenericServiceImpl<Menu, Long> implements M
     @Transactional(readOnly = true)
     public List<MenuTreeNode> getMenuTreeForCurrentUser() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if (auth == null || !auth.isAuthenticated()) {
+        if (auth == null || !auth.isAuthenticated() || isAnonymous(auth)) {
             return new ArrayList<>();
         }
 
@@ -58,10 +58,15 @@ public class MenuServiceImpl extends GenericServiceImpl<Menu, Long> implements M
         }
 
         List<MenuTreeNode> tree = buildMenuTree(auth);
-        if (session != null) {
+        if (session != null && !tree.isEmpty()) {
             session.setAttribute(SESSION_MENU_TREE_KEY, tree);
         }
         return tree;
+    }
+
+    private boolean isAnonymous(Authentication auth) {
+        return auth.getAuthorities().stream()
+                .anyMatch(a -> "ROLE_ANONYMOUS".equals(a.getAuthority()));
     }
 
     private List<MenuTreeNode> buildMenuTree(Authentication auth) {
@@ -146,6 +151,7 @@ public class MenuServiceImpl extends GenericServiceImpl<Menu, Long> implements M
             menu.setUpdatedBy(SecurityUtils.getCurrentUsername());
             menu.setUpdatedDate(LocalDateTime.now());
             save(menu);
+            invalidateMenuTreeCache();
         }
     }
 
