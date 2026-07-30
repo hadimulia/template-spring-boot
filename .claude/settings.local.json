@@ -26,7 +26,18 @@
       "Bash(git checkout *)",
       "Bash(git ls-tree *)",
       "Bash(git status *)",
-      "Bash(grep -rn '\\\\${' /home/taufik/claudecode/template-spring-boot/src/main/resources --include=\"*.xml\")"
+      "Bash(grep -rn '\\\\${' /home/taufik/claudecode/template-spring-boot/src/main/resources --include=\"*.xml\")",
+      "mcp__plugin_playwright_playwright__browser_type",
+      "mcp__plugin_playwright_playwright__browser_click",
+      "mcp__plugin_playwright_playwright__browser_snapshot",
+      "mcp__plugin_playwright_playwright__browser_evaluate",
+      "mcp__plugin_playwright_playwright__browser_navigate",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:8080/login)",
+      "mcp__plugin_playwright_playwright__browser_tabs",
+      "mcp__plugin_playwright_playwright__browser_console_messages",
+      "Bash(grep -v 'bi-\\\\|layout:\\\\|sec:\\\\|th:field\\\\|th:if\\\\|\\\\${')",
+      "Bash(curl -s -c /tmp/cookies.txt -b /tmp/cookies.txt http://localhost:8080/login)",
+      "Bash(curl *)"
     ]
   }
 }

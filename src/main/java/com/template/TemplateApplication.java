@@ -5,7 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import tk.mybatis.spring.annotation.MapperScan;
 
 @SpringBootApplication
-@MapperScan({"com.template.mapper.menu", "com.template.mapper.role", "com.template.mapper.user", "com.template.mapper.permission", "com.template.mapper.audit"})
+@MapperScan({"com.template.mapper"})
 public class TemplateApplication {
 
     public static void main(String[] args) {

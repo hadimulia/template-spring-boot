@@ -7,11 +7,11 @@ document.addEventListener('DOMContentLoaded', function () {
                 ? '<span class="badge bg-success">Yes</span>'
                 : '<span class="badge bg-danger">No</span>';
             var deleteForm = '<form action="/menus/' + row.id + '/delete" method="post" class="d-inline">' +
-                '<button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#confirmModal" data-modal-title="Delete Menu" data-modal-body="Are you sure you want to delete this menu?" data-modal-btn="Delete"><i class="bi bi-trash"></i></button></form>';
+                '<button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#confirmModal" data-modal-title="' + appI18n.confirmDeleteMenuTitle + '" data-modal-body="' + appI18n.confirmDeleteMenuBody + '" data-modal-btn="' + appI18n.modalConfirmDelete + '"><i class="bi bi-trash"></i></button></form>';
             return '<tr>' +
                 '<td>' + index + '</td>' +
-                '<td>' + (row.name || '') + '</td>' +
-                '<td>' + (row.parentName || '') + '</td>' +
+                '<td>' + t(row.i18nKey, row.name || '') + '</td>' +
+                '<td>' + t(row.parentI18nKey, row.parentName || '') + '</td>' +
                 '<td><code>' + (row.url || '') + '</code></td>' +
                 '<td><i class="' + (row.icon || '') + '"></i> ' + (row.icon || '') + '</td>' +
                 '<td>' + (row.sortOrder || '') + '</td>' +

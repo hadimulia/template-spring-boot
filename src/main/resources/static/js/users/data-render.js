@@ -10,10 +10,10 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
             }
             var statusBadge = row.enabled
-                ? '<span class="badge bg-success">Active</span>'
-                : '<span class="badge bg-danger">Inactive</span>';
+                ? '<span class="badge bg-success">' + appI18n.userActive + '</span>'
+                : '<span class="badge bg-danger">' + appI18n.userInactive + '</span>';
             var deleteForm = '<form action="/users/' + row.id + '/delete" method="post" class="d-inline">' +
-                '<button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#confirmModal" data-modal-title="Delete User" data-modal-body="Are you sure you want to delete this user?" data-modal-btn="Delete"><i class="bi bi-trash"></i></button></form>';
+                '<button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#confirmModal" data-modal-title="' + appI18n.confirmDeleteUserTitle + '" data-modal-body="' + appI18n.confirmDeleteUserBody + '" data-modal-btn="' + appI18n.modalConfirmDelete + '"><i class="bi bi-trash"></i></button></form>';
             return '<tr>' +
                 '<td>' + index + '</td>' +
                 '<td>' + (row.username || '') + '</td>' +

@@ -22,22 +22,25 @@ public class MenuResponse {
     private String icon;
     private Integer sortOrder;
     private Boolean visible;
+    private String i18nKey;
+    private String parentI18nKey;
     private String createdBy;
     private LocalDateTime createdDate;
     private String updatedBy;
     private LocalDateTime updatedDate;
-    
+
     public static MenuResponse of(Menu menu) {
-    	MenuResponse response = new MenuResponse();
-    	response.setParentId(menu.getParentId());
-    	response.setName(menu.getName());
-    	response.setUrl(menu.getUrl());
-    	response.setIcon(menu.getIcon());
+        MenuResponse response = new MenuResponse();
+        response.setParentId(menu.getParentId());
+        response.setName(menu.getName());
+        response.setUrl(menu.getUrl());
+        response.setIcon(menu.getIcon());
         response.setSortOrder(menu.getSortOrder());
         response.setVisible(menu.getVisible());
+        response.setI18nKey(menu.getI18nKey());
         response.setCreatedBy(SecurityUtils.getCurrentUsername());
         response.setCreatedDate(LocalDateTime.now());
         response.setVisible(menu.getVisible());
-    	return response;
+        return response;
     }
 }

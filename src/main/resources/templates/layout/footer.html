@@ -3,7 +3,21 @@
 <head></head>
 <body>
     <footer th:fragment="footer" sec:authorize="isAuthenticated()" class="bg-dark text-center text-white py-2 footer-bar">
-        <small>&copy; <span th:text="${#temporals.year(#temporals.createNow())}"></span> Template App. All rights reserved.</small>
+        <small>&copy; <span th:text="${#temporals.year(#temporals.createNow())}"></span> <span th:text="#{footer.copyright}">Template App. All rights reserved.</span></small>
     </footer>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    fetch('/notifications/api/unread-count')
+        .then(r => r.json())
+        .then(data => {
+            const badge = document.getElementById('notifBadge');
+            if (data.count > 0) {
+                badge.textContent = data.count;
+                badge.classList.remove('d-none');
+            }
+        });
+});
+</script>
 </body>
 </html>

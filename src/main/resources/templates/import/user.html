@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/main :: layout}">
+<head><title th:text="#{import.title}">Import Users</title></head>
+<body>
+<div layout:fragment="content">
+    <div th:replace="~{fragments/breadcrumb :: breadcrumb(#{import.title})}"></div>
+    <h4 class="mb-4" th:text="#{import.subtitle}">Import Users from Excel</h4>
+
+    <div class="card">
+        <div class="card-body">
+            <div class="alert alert-info">
+                <i class="bi bi-info-circle"></i>
+                <span th:text="#{import.instructions}">Upload an Excel file (.xlsx) with columns: Username, Full Name, Email, Password. The first row should be headers.</span>
+            </div>
+
+            <form th:action="@{/import/users}" method="post" enctype="multipart/form-data">
+                <div class="mb-3">
+                    <label for="file" class="form-label" th:text="#{import.file}">Excel File</label>
+                    <input type="file" class="form-control" id="file" name="file"
+                           accept=".xlsx,.xls" required>
+                </div>
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-upload"></i> <span th:text="#{page.import}">Import</span>
+                </button>
+                <a th:href="@{/users}" class="btn btn-outline-secondary" th:text="#{page.cancel}">Cancel</a>
+            </form>
+
+            <div th:if="${importDetails}" class="mt-4">
+                <h6 th:text="#{import.results}">Import Results:</h6>
+                <ul class="list-group">
+                    <li th:each="detail : ${importDetails}" class="list-group-item list-group-item-${detail.startsWith('Row') ? 'warning' : detail.startsWith('Success') || detail.startsWith('Imported') ? 'success' : 'info'}"
+                        th:text="${detail}"></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+</html>

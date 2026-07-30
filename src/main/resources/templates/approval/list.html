@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/main :: layout}">
+<head><title th:text="#{approval.title}">Approvals</title></head>
+<body>
+<div layout:fragment="content">
+    <div th:replace="~{fragments/breadcrumb :: breadcrumb(#{approval.breadcrumb})}"></div>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h4 class="mb-0" th:text="#{approval.title}">Approval Requests</h4>
+        <a th:href="@{/approvals/pending}" class="btn btn-warning" th:if="${#authorization.expression('hasAuthority(''APPROVAL_REVIEW'')')}">
+            <i class="bi bi-clock"></i> <span th:text="#{approval.pending}">Pending Review</span>
+        </a>
+    </div>
+    <span id="flashSuccess" th:if="${successMessage}" th:text="${successMessage}" class="d-none"></span>
+    <div class="mb-3 input-group">
+        <input type="text" id="searchKeyword" class="form-control" th:value="${keyword}" th:placeholder="#{approval.search.placeholder}">
+        <button type="button" class="btn btn-outline-secondary" id="searchBtn"><i class="bi bi-search"></i> <span th:text="#{page.search}">Search</span></button>
+        <a th:href="@{/approvals}" class="btn btn-outline-secondary" id="refreshBtn"><i class="bi bi-arrow-clockwise"></i> <span th:text="#{page.refresh}">Refresh</span></a>
+    </div>
+    <div class="card">
+        <div class="card-body p-0">
+            <table class="table table-hover mb-0" id="dataTable">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th th:text="#{approval.entity}">Entity</th>
+                        <th th:text="#{approval.type}">Type</th>
+                        <th th:text="#{approval.status}">Status</th>
+                        <th th:text="#{approval.submittedBy}">Submitted By</th>
+                        <th th:text="#{approval.submittedAt}">Submitted At</th>
+                        <th th:text="#{approval.reviewer}">Reviewer</th>
+                    </tr>
+                </thead>
+                <tbody id="dataRows">
+                    <tr th:each="req, stat : ${requests}">
+                        <td th:text="${(pagination.currentPage - 1) * pagination.pageSize + stat.index + 1}"></td>
+                        <td><span class="badge bg-secondary" th:text="${req.entityType}"></span></td>
+                        <td th:text="${req.requestType}"></td>
+                        <td>
+                            <span th:if="${req.status == 'PENDING'}" class="badge bg-warning text-dark">PENDING</span>
+                            <span th:if="${req.status == 'APPROVED'}" class="badge bg-success">APPROVED</span>
+                            <span th:if="${req.status == 'REJECTED'}" class="badge bg-danger">REJECTED</span>
+                        </td>
+                        <td th:text="${req.submittedBy}"></td>
+                        <td style="white-space:nowrap" th:text="${req.submittedAt} ? ${#temporals.format(req.submittedAt, 'yyyy-MM-dd HH:mm')} : '-'"></td>
+                        <td th:text="${req.reviewedBy ?: '-'}"></td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(requests)}"><td colspan="7" class="text-center text-muted py-4" th:text="#{approval.none}">No approval requests</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div th:replace="~{fragments/pagination :: pagination}"></div>
+
+<script th:src="@{/js/list-manager.js}"></script>
+<script th:src="@{/js/approvals/data-render.js}"></script>
+</div>
+</body>
+</html>

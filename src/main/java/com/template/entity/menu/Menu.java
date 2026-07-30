@@ -21,4 +21,5 @@ public class Menu extends BaseEntity {
     private String icon;
     private Integer sortOrder;
     private Boolean visible;
+    private String i18nKey;
 }

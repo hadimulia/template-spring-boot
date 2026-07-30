@@ -2,22 +2,33 @@
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layout/main :: layout}">
-<head><title>User Management</title></head>
+<head><title th:text="#{user.management}">User Management</title></head>
 <body>
 <div layout:fragment="content">
-    <div th:replace="~{fragments/breadcrumb :: breadcrumb('User')}"></div>
+    <div th:replace="~{fragments/breadcrumb :: breadcrumb(#{user.title})}"></div>
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h4 class="mb-0">User Management</h4>
-        <a th:if="${#authorization.expression('hasAuthority(''USER_CREATE'')')}"
-           th:href="@{/users/new}" class="btn btn-primary"><i class="bi bi-plus-lg"></i> Add User</a>
+        <h4 class="mb-0" th:text="#{user.management}">User Management</h4>
+        <div class="btn-group">
+            <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown">
+                <i class="bi bi-download"></i> <span th:text="#{page.export}">Export</span>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end">
+                <li><a class="dropdown-item" th:href="@{/export/users/excel(keyword=${keyword})}"><i class="bi bi-file-earmark-excel"></i> <span th:text="#{page.export.excel}">Export to Excel</span></a></li>
+                <li><a class="dropdown-item" th:href="@{/export/users/pdf(keyword=${keyword})}"><i class="bi bi-file-earmark-pdf"></i> <span th:text="#{page.export.pdf}">Export to PDF</span></a></li>
+            </ul>
+            <a th:if="${#authorization.expression('hasAuthority(''USER_CREATE'')')}"
+               th:href="@{/import/users}" class="btn btn-outline-primary"><i class="bi bi-upload"></i> <span th:text="#{page.import}">Import</span></a>
+            <a th:if="${#authorization.expression('hasAuthority(''USER_CREATE'')')}"
+               th:href="@{/users/new}" class="btn btn-primary"><i class="bi bi-plus-lg"></i> <span th:text="#{user.add}">Add User</span></a>
+        </div>
     </div>
     <span id="flashSuccess" th:if="${successMessage}" th:text="${successMessage}" class="d-none"></span>
     <span id="flashError" th:if="${errorMessage}" th:text="${errorMessage}" class="d-none"></span>
     <div class="mb-3 input-group">
         <input type="text" id="searchKeyword" class="form-control"
-               th:value="${keyword}" placeholder="Search username, name, or email...">
-        <button type="button" class="btn btn-outline-secondary" id="searchBtn"><i class="bi bi-search"></i> Search</button>
-        <a th:href="@{/users}" class="btn btn-outline-secondary" id="refreshBtn"><i class="bi bi-arrow-clockwise"></i> Refresh</a>
+               th:value="${keyword}" th:placeholder="#{user.search.placeholder}">
+        <button type="button" class="btn btn-outline-secondary" id="searchBtn"><i class="bi bi-search"></i> <span th:text="#{page.search}">Search</span></button>
+        <a th:href="@{/users}" class="btn btn-outline-secondary" id="refreshBtn"><i class="bi bi-arrow-clockwise"></i> <span th:text="#{page.refresh}">Refresh</span></a>
     </div>
     <div class="card">
         <div class="card-body p-0">
@@ -25,12 +36,12 @@
                 <thead>
                     <tr>
                         <th>#</th>
-                        <th>Username</th>
-                        <th>Full Name</th>
-                        <th>Email</th>
-                        <th>Roles</th>
-                        <th>Status</th>
-                        <th>Actions</th>
+                        <th th:text="#{user.username}">Username</th>
+                        <th th:text="#{user.fullname}">Full Name</th>
+                        <th th:text="#{user.email}">Email</th>
+                        <th th:text="#{user.roles}">Roles</th>
+                        <th th:text="#{user.status}">Status</th>
+                        <th th:text="#{page.actions}">Actions</th>
                     </tr>
                 </thead>
                 <tbody id="dataRows">
@@ -44,8 +55,8 @@
                                   class="badge bg-info me-1" th:text="${role}"></span>
                         </td>
                         <td>
-                            <span th:if="${user.enabled}" class="badge bg-success">Active</span>
-                            <span th:unless="${user.enabled}" class="badge bg-danger">Inactive</span>
+                            <span th:if="${user.enabled}" class="badge bg-success" th:text="#{user.active}">Active</span>
+                            <span th:unless="${user.enabled}" class="badge bg-danger" th:text="#{user.inactive}">Inactive</span>
                         </td>
                         <td>
                             <a th:if="${#authorization.expression('hasAuthority(''USER_EDIT'')')}"
@@ -56,14 +67,14 @@
                                   method="post" class="d-inline">
                                 <button type="button" class="btn btn-sm btn-danger"
                                         data-bs-toggle="modal" data-bs-target="#confirmModal"
-                                        data-modal-title="Delete User"
-                                        data-modal-body="Are you sure you want to delete this user?"
-                                        data-modal-btn="Delete"><i class="bi bi-trash"></i></button>
+                                        th:data-modal-title="#{confirm.delete.user.title}"
+                                        th:data-modal-body="#{confirm.delete.user.body}"
+                                        th:data-modal-btn="#{modal.confirm.delete}"><i class="bi bi-trash"></i></button>
                             </form>
                         </td>
                     </tr>
                     <tr th:if="${#lists.isEmpty(users)}">
-                        <td colspan="7" class="text-center text-muted py-4">No users found</td>
+                        <td colspan="7" class="text-center text-muted py-4" th:text="#{user.notfound}">No users found</td>
                     </tr>
                 </tbody>
             </table>

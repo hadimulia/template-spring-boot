@@ -26,6 +26,7 @@ public class MenuTreeBuilder {
                     .icon(menu.getIcon())
                     .sortOrder(menu.getSortOrder())
                     .parentId(menu.getParentId())
+                    .i18nKey(menu.getI18nKey() != null ? menu.getI18nKey() : "")
                     .children(new ArrayList<>())
                     .build();
 

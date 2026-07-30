@@ -11,6 +11,8 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import com.template.dto.menu.MenuRequest;
 import com.template.dto.menu.MenuResponse;
@@ -23,27 +25,46 @@ import com.template.service.generic.GenericServiceImpl;
 import com.template.util.MenuTreeBuilder;
 import com.template.util.SecurityUtils;
 
+import jakarta.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
 
 @Service
-@Transactional
 @Slf4j
 public class MenuServiceImpl extends GenericServiceImpl<Menu, Long> implements MenuService{
 
-	private MenuMapper menuMapper;
-	
+    private final MenuMapper menuMapper;
+
     public MenuServiceImpl(MenuMapper mapper) {
-		super(mapper);
-		this.menuMapper = mapper;
-	}
+        super(mapper);
+        this.menuMapper = mapper;
+    }
 
+    private static final String SESSION_MENU_TREE_KEY = "menuTreeCache";
 
+    @Transactional(readOnly = true)
     public List<MenuTreeNode> getMenuTreeForCurrentUser() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth == null || !auth.isAuthenticated()) {
             return new ArrayList<>();
         }
 
+        HttpSession session = getSession();
+        if (session != null) {
+            @SuppressWarnings("unchecked")
+            List<MenuTreeNode> cached = (List<MenuTreeNode>) session.getAttribute(SESSION_MENU_TREE_KEY);
+            if (cached != null) {
+                return cached;
+            }
+        }
+
+        List<MenuTreeNode> tree = buildMenuTree(auth);
+        if (session != null) {
+            session.setAttribute(SESSION_MENU_TREE_KEY, tree);
+        }
+        return tree;
+    }
+
+    private List<MenuTreeNode> buildMenuTree(Authentication auth) {
         Set<String> roleNames = auth.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .filter(a -> a.startsWith("ROLE_"))
@@ -52,6 +73,21 @@ public class MenuServiceImpl extends GenericServiceImpl<Menu, Long> implements M
 
         List<Menu> menus = menuMapper.findByRoleNames(new ArrayList<>(roleNames));
         return MenuTreeBuilder.buildTree(menus);
+    }
+
+    private void invalidateMenuTreeCache() {
+        HttpSession session = getSession();
+        if (session != null) {
+            session.removeAttribute(SESSION_MENU_TREE_KEY);
+        }
+    }
+
+    private static HttpSession getSession() {
+        ServletRequestAttributes attrs = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+        if (attrs != null) {
+            return attrs.getRequest().getSession(true);
+        }
+        return null;
     }
 
     @Transactional(readOnly = true)
@@ -63,6 +99,7 @@ public class MenuServiceImpl extends GenericServiceImpl<Menu, Long> implements M
     }
 
     @Auditable(action = "CREATE", entityType = "MENU", description = "#request.name")
+    @Transactional
     public MenuResponse create(MenuRequest request) {
         Menu menu = new Menu();
         menu.setParentId(request.getParentId());
@@ -71,15 +108,18 @@ public class MenuServiceImpl extends GenericServiceImpl<Menu, Long> implements M
         menu.setIcon(request.getIcon());
         menu.setSortOrder(request.getSortOrder());
         menu.setVisible(request.getVisible());
+        menu.setI18nKey(request.getI18nKey());
         menu.setCreatedBy(SecurityUtils.getCurrentUsername());
         menu.setCreatedDate(LocalDateTime.now());
         menu.setDeleted(false);
         menu.setVersion(0);
         menu = save(menu);
+        invalidateMenuTreeCache();
         return MenuResponse.of(menu);
     }
 
     @Auditable(action = "UPDATE", entityType = "MENU", description = "#request.name")
+    @Transactional
     public void update(MenuRequest request) {
         Menu menu = get(request.getId());
         if (menu != null) {
@@ -89,13 +129,16 @@ public class MenuServiceImpl extends GenericServiceImpl<Menu, Long> implements M
             menu.setIcon(request.getIcon());
             menu.setSortOrder(request.getSortOrder());
             menu.setVisible(request.getVisible());
+            menu.setI18nKey(request.getI18nKey());
             menu.setUpdatedBy(SecurityUtils.getCurrentUsername());
             menu.setUpdatedDate(LocalDateTime.now());
             save(menu);
+            invalidateMenuTreeCache();
         }
     }
 
     @Auditable(action = "DELETE", entityType = "MENU", description = "")
+    @Transactional
     public void delete(Long id) {
         Menu menu = get(id);
         if (menu != null) {
@@ -106,6 +149,7 @@ public class MenuServiceImpl extends GenericServiceImpl<Menu, Long> implements M
         }
     }
 
+    @Transactional(readOnly = true)
     public MenuResponse getById(Long id) {
         Menu menu = get(id);
         if (menu == null) return null;
@@ -118,6 +162,7 @@ public class MenuServiceImpl extends GenericServiceImpl<Menu, Long> implements M
                 .icon(menu.getIcon())
                 .sortOrder(menu.getSortOrder())
                 .visible(menu.getVisible())
+                .i18nKey(menu.getI18nKey())
                 .createdBy(menu.getCreatedBy())
                 .createdDate(menu.getCreatedDate())
                 .updatedBy(menu.getUpdatedBy())
@@ -125,6 +170,7 @@ public class MenuServiceImpl extends GenericServiceImpl<Menu, Long> implements M
                 .build();
     }
 
+    @Transactional(readOnly = true)
     public List<Menu> findAllMenus() {
         return getAll().stream()
                 .filter(m -> !Boolean.TRUE.equals(m.getDeleted()))

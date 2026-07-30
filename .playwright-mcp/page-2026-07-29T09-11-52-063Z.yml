@@ -1,0 +1,116 @@
+- generic [active] [ref=f5e1]:
+  - navigation [ref=f5e2]:
+    - link " Template App" [ref=f5e3] [cursor=pointer]:
+      - /url: /
+      - generic [ref=f5e4]: 
+      - text: Template App
+    - generic [ref=f5e5]:
+      - button "" [ref=f5e6] [cursor=pointer]
+      - button "" [ref=f5e9] [cursor=pointer]
+      - link "" [ref=f5e11] [cursor=pointer]:
+        - /url: /notifications
+      - generic [ref=f5e13]:
+        - generic [ref=f5e14]: 
+        - text: admin
+      - button " Logout" [ref=f5e16] [cursor=pointer]:
+        - generic [ref=f5e17]: 
+        - text: Logout
+  - generic [ref=f5e18]:
+    - generic [ref=f5e20]:
+      - heading " Menu" [level=5] [ref=f5e21]:
+        - generic [ref=f5e22]: 
+        - text: Menu
+      - list [ref=f5e23]:
+        - listitem [ref=f5e24]:
+          - link " Dashboard" [ref=f5e25] [cursor=pointer]:
+            - /url: /dashboard
+            - generic [ref=f5e26]: 
+            - text: Dashboard
+        - listitem [ref=f5e27]:
+          - generic [ref=f5e28]:
+            - link " Master " [expanded] [ref=f5e29] [cursor=pointer]:
+              - /url: "#submenu-2"
+              - generic [ref=f5e30]: 
+              - text: Master
+              - generic [ref=f5e31]: 
+            - list [ref=f5e33]:
+              - listitem [ref=f5e34]:
+                - link " User" [ref=f5e35] [cursor=pointer]:
+                  - /url: /users
+                  - generic [ref=f5e36]: 
+                  - text: User
+              - listitem [ref=f5e37]:
+                - link " Role" [ref=f5e38] [cursor=pointer]:
+                  - /url: /roles
+                  - generic [ref=f5e39]: 
+                  - text: Role
+              - listitem [ref=f5e40]:
+                - link " Menu" [ref=f5e41] [cursor=pointer]:
+                  - /url: /menus
+                  - generic [ref=f5e42]: 
+                  - text: Menu
+              - listitem [ref=f5e43]:
+                - link " Permission" [ref=f5e44] [cursor=pointer]:
+                  - /url: /permissions
+                  - generic [ref=f5e45]: 
+                  - text: Permission
+              - listitem [ref=f5e46]:
+                - link " Session Management" [ref=f5e47] [cursor=pointer]:
+                  - /url: /sessions
+                  - generic [ref=f5e48]: 
+                  - text: Session Management
+              - listitem [ref=f5e49]:
+                - link " Audit Trail" [ref=f5e50] [cursor=pointer]:
+                  - /url: /audit-logs
+                  - generic [ref=f5e51]: 
+                  - text: Audit Trail
+              - listitem [ref=f5e52]:
+                - link " Approvals" [ref=f5e53] [cursor=pointer]:
+                  - /url: /approvals
+                  - generic [ref=f5e54]: 
+                  - text: Approvals
+              - listitem [ref=f5e55]:
+                - link " File Manager" [ref=f5e56] [cursor=pointer]:
+                  - /url: /files
+                  - generic [ref=f5e57]: 
+                  - text: File Manager
+              - listitem [ref=f5e58]:
+                - link " Notifications" [ref=f5e59] [cursor=pointer]:
+                  - /url: /notifications
+                  - generic [ref=f5e60]: 
+                  - text: Notifications
+        - listitem
+    - generic [ref=f5e62]:
+      - navigation "breadcrumb" [ref=f5e63]:
+        - list [ref=f5e64]:
+          - listitem [ref=f5e65]:
+            - link " Home" [ref=f5e66] [cursor=pointer]:
+              - /url: /
+              - generic [ref=f5e67]: 
+              - text: Home
+          - listitem [ref=f5e68]: / Dashboard
+      - heading "Dashboard" [level=4] [ref=f5e69]
+      - generic [ref=f5e70]:
+        - generic [ref=f5e73]:
+          - generic [ref=f5e74]:
+            - heading "Users" [level=6] [ref=f5e75]
+            - heading "2" [level=2] [ref=f5e76]
+          - generic [ref=f5e77]: 
+        - generic [ref=f5e80]:
+          - generic [ref=f5e81]:
+            - heading "Roles" [level=6] [ref=f5e82]
+            - heading "2" [level=2] [ref=f5e83]
+          - generic [ref=f5e84]: 
+        - generic [ref=f5e87]:
+          - generic [ref=f5e88]:
+            - heading "Menus" [level=6] [ref=f5e89]
+            - heading "13" [level=2] [ref=f5e90]
+          - generic [ref=f5e91]: 
+        - generic [ref=f5e94]:
+          - generic [ref=f5e95]:
+            - heading "Permissions" [level=6] [ref=f5e96]
+            - heading "21" [level=2] [ref=f5e97]
+          - generic [ref=f5e98]: 
+  - contentinfo [ref=f5e99]:
+    - generic [ref=f5e100]: © 2026 Template App. All rights reserved.
+  - generic:    

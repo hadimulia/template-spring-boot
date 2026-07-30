@@ -14,5 +14,6 @@ public class MenuTreeNode {
     private Integer sortOrder;
     private Long parentId;
     private boolean active;
+    private String i18nKey;
     private List<MenuTreeNode> children;
 }

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/main :: layout}">
+<head><title th:text="#{notification.title}">Notification Center</title></head>
+<body>
+<div layout:fragment="content">
+    <div th:replace="~{fragments/breadcrumb :: breadcrumb(#{notification.breadcrumb})}"></div>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h4 class="mb-0" th:text="#{notification.title}">Notification Center</h4>
+        <button class="btn btn-outline-primary" id="markAllReadBtn">
+            <i class="bi bi-check-all"></i> <span th:text="#{notification.markAllRead}">Mark All as Read</span>
+        </button>
+    </div>
+    <div class="card">
+        <div class="card-body p-0">
+            <div class="list-group list-group-flush" id="notificationList">
+                <div th:each="notif : ${notifications}" class="list-group-item"
+                     th:classappend="${notif.isRead} ? '' : 'list-group-item-primary'">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div class="flex-grow-1">
+                            <div class="d-flex align-items-center gap-2">
+                                <strong th:text="${notif.title}">Title</strong>
+                                <span th:if="${!notif.isRead}" class="badge bg-primary" th:text="#{notification.new}">New</span>
+                                <span class="badge"
+                                      th:classappend="${notif.type == 'INFO'} ? 'bg-info' : ${notif.type == 'SUCCESS'} ? 'bg-success' : ${notif.type == 'WARNING'} ? 'bg-warning' : 'bg-danger'"
+                                      th:text="${notif.type}">Type</span>
+                            </div>
+                            <p class="mb-1 text-muted" th:if="${notif.message}" th:text="${notif.message}">Message</p>
+                            <small class="text-muted" th:text="${notif.createdDate}">Date</small>
+                        </div>
+                        <div class="ms-3">
+                            <a th:if="${notif.link}" th:href="@{${notif.link}}" class="btn btn-sm btn-outline-primary">
+                                <i class="bi bi-arrow-right"></i>
+                            </a>
+                            <button th:if="${!notif.isRead}"
+                                    class="btn btn-sm btn-outline-secondary mark-read-btn"
+                                    th:data-id="${notif.id}">
+                                <i class="bi bi-check"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div th:if="${#lists.isEmpty(notifications)}" class="text-center text-muted py-5">
+                    <i class="bi bi-bell-slash" style="font-size: 2rem;"></i>
+                    <p class="mt-2" th:text="#{notification.none}">No notifications yet</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div th:replace="~{fragments/pagination :: pagination}"></div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('.mark-read-btn').forEach(btn => {
+        btn.addEventListener('click', function () {
+            const id = this.dataset.id;
+            fetch('/notifications/' + id + '/read', { method: 'POST' })
+                .then(() => location.reload());
+        });
+    });
+
+    document.getElementById('markAllReadBtn')?.addEventListener('click', function () {
+        fetch('/notifications/read-all', { method: 'POST' })
+            .then(() => location.reload());
+    });
+});
+</script>
+</html>

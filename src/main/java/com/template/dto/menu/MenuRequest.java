@@ -18,4 +18,6 @@ public class MenuRequest {
     private Integer sortOrder;
 
     private Boolean visible = true;
+
+    private String i18nKey;
 }

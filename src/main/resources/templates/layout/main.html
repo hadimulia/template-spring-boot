@@ -35,15 +35,15 @@
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="confirmModalTitle">Confirm</h5>
+                    <h5 class="modal-title" id="confirmModalTitle" th:text="#{modal.confirm.title}">Confirm</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
-                <div class="modal-body" id="confirmModalBody">
+                <div class="modal-body" id="confirmModalBody" th:text="#{modal.confirm.body}">
                     Are you sure?
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-danger" id="confirmModalBtn">Delete</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" th:text="#{modal.confirm.cancel}">Cancel</button>
+                    <button type="button" class="btn btn-danger" id="confirmModalBtn" th:text="#{modal.confirm.delete}">Delete</button>
                 </div>
             </div>
         </div>
@@ -52,6 +52,29 @@
     <!-- Toast Container -->
     <div th:replace="~{fragments/toast :: toast}"></div>
 
+    <script th:inline="javascript">
+        const appI18n = {
+            confirmDeleteMenuTitle: /*[[#{confirm.delete.menu.title}]]*/ '',
+            confirmDeleteMenuBody: /*[[#{confirm.delete.menu.body}]]*/ '',
+            confirmDeleteUserTitle: /*[[#{confirm.delete.user.title}]]*/ '',
+            confirmDeleteUserBody: /*[[#{confirm.delete.user.body}]]*/ '',
+            confirmDeleteRoleTitle: /*[[#{confirm.delete.role.title}]]*/ '',
+            confirmDeleteRoleBody: /*[[#{confirm.delete.role.body}]]*/ '',
+            confirmDeletePermissionTitle: /*[[#{confirm.delete.permission.title}]]*/ '',
+            confirmDeletePermissionBody: /*[[#{confirm.delete.permission.body}]]*/ '',
+            modalConfirmDelete: /*[[#{modal.confirm.delete}]]*/ '',
+            sessionForceLogoutTitle: /*[[#{confirm.session.forceLogout.title}]]*/ '',
+            sessionForceLogoutBody: /*[[#{confirm.session.forceLogout.body}]]*/ '',
+            sessionForceLogoutBtn: /*[[#{confirm.session.forceLogout.btn}]]*/ '',
+            userActive: /*[[#{user.active}]]*/ '',
+            userInactive: /*[[#{user.inactive}]]*/ '',
+            loading: 'Loading...',
+            noData: /*[[#{page.list}]]*/ 'No data found',
+            yes: /*[[#{page.yes}]]*/ '',
+            no: /*[[#{page.no}]]*/ '',
+        };
+    </script>
+    <script th:src="@{/js/theme.js}"></script>
     <script th:src="@{/js/bootstrap.bundle.min.js}"></script>
     <script th:src="@{/js/app.js}"></script>
     <script th:src="@{/js/toast.js}"></script>

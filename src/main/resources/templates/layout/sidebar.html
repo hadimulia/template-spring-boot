@@ -3,28 +3,25 @@
 <head></head>
 <body>
     <div th:fragment="sidebar" class="d-flex flex-column p-3 text-white bg-dark h-100">
-        <h5 class="mb-3">
-            <i class="bi bi-menu-button-wide"></i> Menu
-        </h5>
         <ul class="nav nav-pills flex-column mb-auto">
             <li th:each="menu : ${menuTree}" class="nav-item">
                 <!-- Menu with URL (leaf menu) -->
-                <a th:if="${menu.url != null}" th:href="@{${menu.url}}"
+                <a th:if="${menu.url != null and !menu.url.isEmpty()}" th:href="@{${menu.url}}"
                    class="nav-link text-white"
                    th:classappend="${menu.active} ? 'active'">
                     <i th:class="${menu.icon} + ' me-2'"></i>
-                    <span th:text="${menu.name}">Menu</span>
+                    <span th:text="${#strings.isEmpty(menu.i18nKey)} ? ${menu.name} : ${#messages.msg(menu.i18nKey)}">Menu</span>
                 </a>
 
                 <!-- Menu without URL but has children (parent menu) -->
-                <div th:if="${menu.url == null and !#lists.isEmpty(menu.children)}">
+                <div th:if="${(menu.url == null or menu.url.isEmpty()) and !#lists.isEmpty(menu.children)}">
                     <a class="nav-link text-white collapsed"
                        data-bs-toggle="collapse"
                        th:href="'#submenu-' + ${menu.id}"
                        th:aria-expanded="${menu.active}"
                        th:classappend="${menu.active} ? '' : 'collapsed'">
                         <i th:class="${menu.icon} + ' me-2'"></i>
-                        <span th:text="${menu.name}">Parent</span>
+                        <span th:text="${#strings.isEmpty(menu.i18nKey)} ? ${menu.name} : ${#messages.msg(menu.i18nKey)}">Parent</span>
                         <i class="bi bi-chevron-down float-end"></i>
                     </a>
                     <div th:id="'submenu-' + ${menu.id}" class="collapse"
@@ -34,7 +31,7 @@
                                 <a th:href="@{${child.url}}" class="nav-link text-white"
                                    th:classappend="${child.active} ? 'active'">
                                     <i th:class="${child.icon} + ' me-2'"></i>
-                                    <span th:text="${child.name}">Submenu</span>
+                                    <span th:text="${#strings.isEmpty(child.i18nKey)} ? ${child.name} : ${#messages.msg(child.i18nKey)}">Submenu</span>
                                 </a>
                             </li>
                         </ul>

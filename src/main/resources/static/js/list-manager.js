@@ -29,7 +29,7 @@ function ListManager(config) {
         var table = document.getElementById('dataTable');
         var colspan = table ? table.querySelector('thead tr').children.length : 4;
         tbody.innerHTML = '<tr><td colspan="' + colspan +
-            '" class="text-center py-4"><div class="spinner-border spinner-border-sm text-primary me-2" role="status"></div>Loading...</td></tr>';
+            '" class="text-center py-4"><div class="spinner-border spinner-border-sm text-primary me-2" role="status"></div>' + (window.appI18n?.loading || 'Loading...') + '</td></tr>';
     };
 
     self.renderRows = function (data, page, size) {
@@ -38,7 +38,7 @@ function ListManager(config) {
             var table = document.getElementById('dataTable');
             var colspan = table ? table.querySelector('thead tr').children.length : 4;
             tbody.innerHTML = '<tr><td colspan="' + colspan +
-                '" class="text-center text-muted py-4">No data found</td></tr>';
+                '" class="text-center text-muted py-4">' + (window.appI18n?.noData || 'No data found') + '</td></tr>';
             return;
         }
         var html = '';

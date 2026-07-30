@@ -3,6 +3,9 @@ spring:
     name: template-spring-boot
   profiles:
     active: dev
+  messages:
+    basename: i18n/messages
+    encoding: UTF-8
   datasource:
     url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/template_db}
     username: ${DATABASE_USERNAME:postgres}

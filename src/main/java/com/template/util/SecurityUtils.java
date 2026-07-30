@@ -1,5 +1,6 @@
 package com.template.util;
 
+import com.template.security.CustomUserDetails;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -16,6 +17,16 @@ public class SecurityUtils {
             return auth.getName();
         }
         return "system";
+    }
+
+    public static Long getCurrentUserId() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth != null && auth.isAuthenticated()
+                && !(auth instanceof AnonymousAuthenticationToken)
+                && auth.getPrincipal() instanceof CustomUserDetails details) {
+            return details.getUserId();
+        }
+        return null;
     }
 
     public static String getCurrentIpAddress() {

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.template.mapper.approval.ApprovalRequestMapper">
+
+    <resultMap id="responseMap" type="com.template.dto.approval.ApprovalRequestResponse">
+        <id property="id" column="id"/>
+        <result property="entityType" column="entity_type"/>
+        <result property="entityId" column="entity_id"/>
+        <result property="requestType" column="request_type"/>
+        <result property="status" column="status"/>
+        <result property="requestData" column="request_data"/>
+        <result property="submittedBy" column="submitted_by"/>
+        <result property="submittedAt" column="submitted_at"/>
+        <result property="reviewedBy" column="reviewed_by"/>
+        <result property="reviewedAt" column="reviewed_at"/>
+        <result property="reviewNotes" column="review_notes"/>
+    </resultMap>
+
+    <select id="findPage" resultMap="responseMap">
+        SELECT * FROM approval_requests
+        <where>
+            <if test="keyword != null and keyword != ''">
+                (entity_type ILIKE '%' || #{keyword} || '%'
+                OR request_type ILIKE '%' || #{keyword} || '%'
+                OR status ILIKE '%' || #{keyword} || '%'
+                OR submitted_by ILIKE '%' || #{keyword} || '%')
+            </if>
+        </where>
+        ORDER BY submitted_at DESC
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+
+    <select id="countPage" resultType="int">
+        SELECT COUNT(*) FROM approval_requests
+        <where>
+            <if test="keyword != null and keyword != ''">
+                (entity_type ILIKE '%' || #{keyword} || '%'
+                OR request_type ILIKE '%' || #{keyword} || '%'
+                OR status ILIKE '%' || #{keyword} || '%'
+                OR submitted_by ILIKE '%' || #{keyword} || '%')
+            </if>
+        </where>
+    </select>
+
+    <select id="findPending" resultMap="responseMap">
+        SELECT * FROM approval_requests WHERE status = 'PENDING' ORDER BY submitted_at ASC
+    </select>
+
+</mapper>

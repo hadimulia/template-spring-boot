@@ -10,6 +10,7 @@
         <result property="icon" column="icon"/>
         <result property="sortOrder" column="sort_order"/>
         <result property="visible" column="visible"/>
+        <result property="i18nKey" column="i18n_key"/>
         <result property="createdBy" column="created_by"/>
         <result property="createdDate" column="created_date"/>
         <result property="updatedBy" column="updated_by"/>
@@ -31,7 +32,7 @@
     </select>
 
     <select id="findAll" resultType="com.template.dto.menu.MenuResponse">
-        SELECT m.*, pm.name AS parentName
+        SELECT m.*, pm.name AS parentName, pm.i18n_key AS parentI18nKey
         FROM menus m
         LEFT JOIN menus pm ON m.parent_id = pm.id
         WHERE m.deleted = false

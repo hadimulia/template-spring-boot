@@ -5,16 +5,32 @@
 <body>
     <nav th:fragment="header" sec:authorize="isAuthenticated()" class="navbar navbar-dark bg-primary px-3 fixed-top">
         <a class="navbar-brand" th:href="@{/}">
-            <i class="bi bi-grid"></i> Template App
+            <i class="bi bi-grid"></i> <span th:text="#{header.brand}">Template App</span>
         </a>
         <div class="d-flex align-items-center">
+            <button id="themeToggle" class="btn btn-outline-light btn-sm me-2" th:title="#{header.theme.toggle}">
+                <i class="bi bi-moon-fill"></i>
+            </button>
+            <div class="dropdown me-2">
+                <button class="btn btn-outline-light btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                    <i class="bi bi-translate"></i>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end">
+                    <li><a class="dropdown-item" th:href="@{?lang=en}">English</a></li>
+                    <li><a class="dropdown-item" th:href="@{?lang=id}">Bahasa Indonesia</a></li>
+                </ul>
+            </div>
+            <a th:href="@{/notifications}" class="btn btn-outline-light btn-sm me-2 position-relative" th:title="#{header.notifications}">
+                <i class="bi bi-bell"></i>
+                <span id="notifBadge" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger d-none">0</span>
+            </a>
             <span class="text-white me-3">
                 <i class="bi bi-person-circle"></i>
                 <span sec:authentication="name"></span>
             </span>
             <form th:action="@{/logout}" method="post" class="m-0">
                 <button type="submit" class="btn btn-outline-light btn-sm">
-                    <i class="bi bi-box-arrow-right"></i> Logout
+                    <i class="bi bi-box-arrow-right"></i> <span th:text="#{header.logout}">Logout</span>
                 </button>
             </form>
         </div>

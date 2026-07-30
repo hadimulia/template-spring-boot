@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/main :: layout}">
+<head><title th:text="#{approval.pending}">Pending Review</title></head>
+<body>
+<div layout:fragment="content">
+    <div th:replace="~{fragments/breadcrumb :: breadcrumb(#{approval.pending})}"></div>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h4 class="mb-0" th:text="#{approval.pending}">Pending Review</h4>
+        <a th:href="@{/approvals}" class="btn btn-secondary"><i class="bi bi-arrow-left"></i> <span th:text="#{page.back}">Back</span></a>
+    </div>
+    <span id="flashSuccess" th:if="${successMessage}" th:text="${successMessage}" class="d-none"></span>
+    <div class="card">
+        <div class="card-body p-0">
+            <table class="table table-hover mb-0">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th th:text="#{approval.entity}">Entity</th>
+                        <th th:text="#{approval.type}">Type</th>
+                        <th th:text="#{approval.submittedBy}">Submitted By</th>
+                        <th th:text="#{approval.submittedAt}">Submitted At</th>
+                        <th th:text="#{page.action}">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="req, stat : ${requests}">
+                        <td th:text="${stat.index + 1}"></td>
+                        <td><span class="badge bg-secondary" th:text="${req.entityType}"></span></td>
+                        <td th:text="${req.requestType}"></td>
+                        <td th:text="${req.submittedBy}"></td>
+                        <td style="white-space:nowrap" th:text="${req.submittedAt} ? ${#temporals.format(req.submittedAt, 'yyyy-MM-dd HH:mm')} : '-'"></td>
+                        <td>
+                            <button class="btn btn-sm btn-success" data-bs-toggle="modal" data-bs-target="#reviewModal"
+                                    th:data-id="${req.id}" th:data-action="APPROVED"><i class="bi bi-check-lg"></i></button>
+                            <button class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#reviewModal"
+                                    th:data-id="${req.id}" th:data-action="REJECTED"><i class="bi bi-x-lg"></i></button>
+                        </td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(requests)}"><td colspan="6" class="text-center text-muted py-4" th:text="#{approval.pending.none}">No pending requests</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Review Modal -->
+<div class="modal fade" id="reviewModal" tabindex="-1">
+    <div class="modal-dialog">
+        <form th:action="@{/approvals/review}" method="post" class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" th:text="#{approval.review.title}">Review Request</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" name="id" id="reviewId">
+                <input type="hidden" name="action" id="reviewAction">
+                <div class="mb-3">
+                    <label for="reviewNotes" class="form-label" th:text="#{approval.review.notes}">Notes</label>
+                    <textarea class="form-control" id="reviewNotes" name="reviewNotes" rows="3"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" th:text="#{modal.confirm.cancel}">Cancel</button>
+                <button type="submit" class="btn btn-primary" th:text="#{page.submit}">Submit</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('[data-bs-target="#reviewModal"]').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            document.getElementById('reviewId').value = this.getAttribute('data-id');
+            document.getElementById('reviewAction').value = this.getAttribute('data-action');
+        });
+    });
+});
+</script>
+</body>
+</html>
