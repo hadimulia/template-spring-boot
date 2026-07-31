@@ -29,7 +29,7 @@ public class CustomAuthenticationFailureHandler extends SimpleUrlAuthenticationF
         String errorMessage = "Invalid username or password";
 
         if (username != null && !username.isEmpty()) {
-            User user = userMapper.findByUsername(username);
+            User user = userMapper.findByUsername(username, null);
             if (user != null) {
                 // Increment login attempts
                 int attempts = user.getLoginAttempts() != null ? user.getLoginAttempts() + 1 : 1;

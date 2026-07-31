@@ -8,10 +8,11 @@ import java.util.List;
 public interface AuditLogMapper {
 
     List<AuditLogResponse> findPage(@Param("keyword") String keyword,
+                                    @Param("tenantId") Long tenantId,
                                     @Param("offset") int offset,
                                     @Param("limit") int limit);
 
-    int countPage(@Param("keyword") String keyword);
+    int countPage(@Param("keyword") String keyword, @Param("tenantId") Long tenantId);
 
     void insert(com.template.entity.audit.AuditLog auditLog);
 }

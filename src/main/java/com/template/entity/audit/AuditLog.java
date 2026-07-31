@@ -15,6 +15,7 @@ import java.time.LocalDateTime;
 @Table(name = "audit_logs")
 public class AuditLog {
     private Long id;
+    private Long tenantId;
     private String entityType;
     private Long entityId;
     private String action;

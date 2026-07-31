@@ -11,6 +11,7 @@ import com.template.mapper.user.UserMapper;
 import com.template.mapper.user.UserRoleMapper;
 import com.template.service.audit.Auditable;
 import com.template.service.generic.GenericServiceImpl;
+import com.template.tenant.TenantContext;
 import com.template.util.SecurityUtils;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -43,8 +44,9 @@ public class UserServiceImpl extends GenericServiceImpl<User, Long> implements U
     @Transactional(readOnly = true)
     public PageResult<UserResponse> findAll(String keyword, int page, int size) {
         int offset = (page - 1) * size;
-        List<UserResponse> data = userMapper.findAll(keyword, offset, size);
-        int total = userMapper.countAll(keyword);
+        Long tenantId = TenantContext.getTenantId();
+        List<UserResponse> data = userMapper.findAll(keyword, tenantId, offset, size);
+        int total = userMapper.countAll(keyword, tenantId);
 
         for (UserResponse user : data) {
             List<Long> roleIds = userRoleMapper.findRoleIdsByUserId(user.getId());
@@ -62,6 +64,7 @@ public class UserServiceImpl extends GenericServiceImpl<User, Long> implements U
     @Auditable(action = "CREATE", entityType = "USER", description = "#request.username")
     public void create(UserRequest request) {
         User user = new User();
+        user.setTenantId(TenantContext.getTenantId());
         user.setUsername(request.getUsername());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
         user.setFullname(request.getFullname());
@@ -78,6 +81,7 @@ public class UserServiceImpl extends GenericServiceImpl<User, Long> implements U
         if (request.getRoleIds() != null) {
             for (Long roleId : request.getRoleIds()) {
                 UserRole userRole = new UserRole();
+                userRole.setTenantId(TenantContext.getTenantId());
                 userRole.setUserId(user.getId());
                 userRole.setRoleId(roleId);
                 userRole.setCreatedBy(SecurityUtils.getCurrentUsername());
@@ -117,6 +121,7 @@ public class UserServiceImpl extends GenericServiceImpl<User, Long> implements U
 
                 for (Long roleId : request.getRoleIds()) {
                     UserRole userRole = new UserRole();
+                    userRole.setTenantId(TenantContext.getTenantId());
                     userRole.setUserId(id);
                     userRole.setRoleId(roleId);
                     userRole.setCreatedBy(SecurityUtils.getCurrentUsername());
@@ -140,12 +145,12 @@ public class UserServiceImpl extends GenericServiceImpl<User, Long> implements U
 
     @Transactional(readOnly = true)
     public User getByUsername(String username) {
-        return userMapper.findByUsername(username);
+        return userMapper.findByUsername(username, TenantContext.getTenantId());
     }
 
     @Transactional(readOnly = true)
     public User getByEmail(String email) {
-        return userMapper.findByEmail(email);
+        return userMapper.findByEmail(email, TenantContext.getTenantId());
     }
 
     @Transactional(readOnly = true)

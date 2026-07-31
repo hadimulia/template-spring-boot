@@ -15,6 +15,7 @@ public class Notification extends BaseEntity {
 
     @Id
     private Long id;
+    private Long tenantId;
     private Long userId;
     private String title;
     private String message;

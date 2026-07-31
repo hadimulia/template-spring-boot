@@ -1,36 +1,35 @@
-package com.template.entity.approval;
+package com.template.entity.tenant;
 
 import java.time.LocalDateTime;
 
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import com.template.entity.PostgreSqlSequenceGenId;
+
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import tk.mybatis.mapper.annotation.KeySql;
 
 @Getter
 @Setter
 @ToString
 @EqualsAndHashCode
-@Table(name = "approval_requests")
-public class ApprovalRequest {
+@Table(name = "tenants")
+public class Tenant {
     @Id
+    @KeySql(genId = PostgreSqlSequenceGenId.class)
     private Long id;
-    private Long tenantId;
-    private String entityType;
-    private Long entityId;
-    private String requestType;
+    private String code;
+    private String name;
+    private String description;
     private String status;
-    private String requestData;
-    private String submittedBy;
-    private LocalDateTime submittedAt;
-    private String reviewedBy;
-    private LocalDateTime reviewedAt;
-    private String reviewNotes;
     private String createdBy;
     private LocalDateTime createdDate;
     private String updatedBy;
     private LocalDateTime updatedDate;
+    private Boolean deleted;
+    private Integer version;
 }

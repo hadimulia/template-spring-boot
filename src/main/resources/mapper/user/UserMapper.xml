@@ -4,6 +4,7 @@
 
     <resultMap id="UserResultMap" type="com.template.entity.user.User">
         <id property="id" column="id"/>
+        <result property="tenantId" column="tenant_id"/>
         <result property="username" column="username"/>
         <result property="password" column="password"/>
         <result property="fullname" column="fullname"/>
@@ -22,18 +23,21 @@
 
     <select id="findByUsername" resultMap="UserResultMap">
         SELECT * FROM users WHERE username = #{username} AND deleted = false
+        <if test="tenantId != null">AND tenant_id = #{tenantId}</if>
     </select>
 
     <select id="findByEmail" resultMap="UserResultMap">
         SELECT * FROM users WHERE email = #{email} AND deleted = false
+        <if test="tenantId != null">AND tenant_id = #{tenantId}</if>
     </select>
 
     <select id="findAll" resultType="com.template.dto.user.UserResponse">
         SELECT u.id, u.username, u.fullname, u.email, u.enabled, u.account_locked AS accountLocked,
                u.last_login AS lastLogin, u.created_by AS createdBy, u.created_date AS createdDate,
-               u.updated_by AS updatedBy, u.updated_date AS updatedDate
+               u.updated_by AS updatedBy, u.updated_date AS updatedDate, u.tenant_id AS tenantId
         FROM users u
         WHERE u.deleted = false
+        <if test="tenantId != null">AND u.tenant_id = #{tenantId}</if>
         <if test="keyword != null and keyword != ''">
             AND (u.username ILIKE '%' || #{keyword} || '%'
                  OR u.fullname ILIKE '%' || #{keyword} || '%'
@@ -46,11 +50,17 @@
     <select id="countAll" resultType="int">
         SELECT COUNT(*) FROM users u
         WHERE u.deleted = false
+        <if test="tenantId != null">AND u.tenant_id = #{tenantId}</if>
         <if test="keyword != null and keyword != ''">
             AND (u.username ILIKE '%' || #{keyword} || '%'
                  OR u.fullname ILIKE '%' || #{keyword} || '%'
                  OR u.email ILIKE '%' || #{keyword} || '%')
         </if>
+    </select>
+
+    <select id="countByTenant" resultType="int">
+        SELECT COUNT(*) FROM users u
+        WHERE u.deleted = false AND u.tenant_id = #{tenantId}
     </select>
 
 </mapper>

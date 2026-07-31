@@ -34,7 +34,7 @@ public class SessionService {
                     String username = userDetails.getUsername();
                     String fullname = username;
 
-                    User user = userMapper.findByUsername(username);
+                    User user = userMapper.findByUsername(username, null);
                     if (user != null) {
                         fullname = user.getFullname();
                     }

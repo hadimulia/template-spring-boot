@@ -16,15 +16,16 @@
     </resultMap>
 
     <insert id="insert">
-        INSERT INTO audit_logs (entity_type, entity_id, action, old_value, new_value, description, performed_by, performed_at, ip_address)
-        VALUES (#{entityType}, #{entityId}, #{action}, #{oldValue}, #{newValue}, #{description}, #{performedBy}, #{performedAt}, #{ipAddress})
+        INSERT INTO audit_logs (tenant_id, entity_type, entity_id, action, old_value, new_value, description, performed_by, performed_at, ip_address)
+        VALUES (#{tenantId}, #{entityType}, #{entityId}, #{action}, #{oldValue}, #{newValue}, #{description}, #{performedBy}, #{performedAt}, #{ipAddress})
     </insert>
 
     <select id="findPage" resultMap="auditLogResponseMap">
         SELECT * FROM audit_logs
         <where>
+            <if test="tenantId != null">tenant_id = #{tenantId}</if>
             <if test="keyword != null and keyword != ''">
-                (entity_type ILIKE '%' || #{keyword} || '%'
+                AND (entity_type ILIKE '%' || #{keyword} || '%'
                 OR action ILIKE '%' || #{keyword} || '%'
                 OR performed_by ILIKE '%' || #{keyword} || '%'
                 OR description ILIKE '%' || #{keyword} || '%')
@@ -37,8 +38,9 @@
     <select id="countPage" resultType="int">
         SELECT COUNT(*) FROM audit_logs
         <where>
+            <if test="tenantId != null">tenant_id = #{tenantId}</if>
             <if test="keyword != null and keyword != ''">
-                (entity_type ILIKE '%' || #{keyword} || '%'
+                AND (entity_type ILIKE '%' || #{keyword} || '%'
                 OR action ILIKE '%' || #{keyword} || '%'
                 OR performed_by ILIKE '%' || #{keyword} || '%'
                 OR description ILIKE '%' || #{keyword} || '%')

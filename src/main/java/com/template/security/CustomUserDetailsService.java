@@ -34,7 +34,9 @@ public class CustomUserDetailsService implements UserDetailsService {
     @Override
     @Transactional(readOnly = true)
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userMapper.findByUsername(username);
+        // Global lookup during login: usernames are unique across tenants,
+        // the resolved tenantId is carried into the principal.
+        User user = userMapper.findByUsername(username, null);
         if (user == null) {
             throw new UsernameNotFoundException("User not found with username: " + username);
         }
@@ -61,6 +63,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 
         return new CustomUserDetails(
                 user.getId(),
+                user.getTenantId(),
                 user.getUsername(),
                 user.getPassword(),
                 authorities

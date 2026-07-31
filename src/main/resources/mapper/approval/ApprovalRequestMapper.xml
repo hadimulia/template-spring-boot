@@ -19,8 +19,9 @@
     <select id="findPage" resultMap="responseMap">
         SELECT * FROM approval_requests
         <where>
+            <if test="tenantId != null">tenant_id = #{tenantId}</if>
             <if test="keyword != null and keyword != ''">
-                (entity_type ILIKE '%' || #{keyword} || '%'
+                AND (entity_type ILIKE '%' || #{keyword} || '%'
                 OR request_type ILIKE '%' || #{keyword} || '%'
                 OR status ILIKE '%' || #{keyword} || '%'
                 OR submitted_by ILIKE '%' || #{keyword} || '%')
@@ -33,8 +34,9 @@
     <select id="countPage" resultType="int">
         SELECT COUNT(*) FROM approval_requests
         <where>
+            <if test="tenantId != null">tenant_id = #{tenantId}</if>
             <if test="keyword != null and keyword != ''">
-                (entity_type ILIKE '%' || #{keyword} || '%'
+                AND (entity_type ILIKE '%' || #{keyword} || '%'
                 OR request_type ILIKE '%' || #{keyword} || '%'
                 OR status ILIKE '%' || #{keyword} || '%'
                 OR submitted_by ILIKE '%' || #{keyword} || '%')
@@ -43,7 +45,9 @@
     </select>
 
     <select id="findPending" resultMap="responseMap">
-        SELECT * FROM approval_requests WHERE status = 'PENDING' ORDER BY submitted_at ASC
+        SELECT * FROM approval_requests WHERE status = 'PENDING'
+        <if test="tenantId != null">AND tenant_id = #{tenantId}</if>
+        ORDER BY submitted_at ASC
     </select>
 
 </mapper>

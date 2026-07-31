@@ -17,12 +17,16 @@
         SELECT id, original_name, content_type, file_size, entity_type, entity_id, created_by, created_date
         FROM file_uploads
         WHERE entity_type = #{entityType} AND entity_id = #{entityId}
+        <if test="tenantId != null">AND tenant_id = #{tenantId}</if>
         ORDER BY created_date DESC
     </select>
 
     <select id="findAll" resultMap="responseMap">
         SELECT id, original_name, content_type, file_size, entity_type, entity_id, created_by, created_date
         FROM file_uploads
+        <where>
+            <if test="tenantId != null">tenant_id = #{tenantId}</if>
+        </where>
         ORDER BY created_date DESC
     </select>
 

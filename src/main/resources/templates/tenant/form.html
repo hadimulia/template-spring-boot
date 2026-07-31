@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/main :: layout}">
+<head><title th:text="#{tenant.edit}">Tenant Form</title></head>
+<body>
+<div layout:fragment="content">
+    <div th:replace="~{fragments/breadcrumb :: breadcrumb(#{tenant.title})}"></div>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h4 class="mb-0" th:text="${tenant.id != null} ? #{tenant.edit} : #{tenant.add}">Tenant Form</h4>
+        <a th:href="@{/tenants}" class="btn btn-secondary"><i class="bi bi-arrow-left"></i> <span th:text="#{page.back}">Back</span></a>
+    </div>
+    <div class="card">
+        <div class="card-body">
+            <form th:action="${tenant.id != null ? '/tenants/' + tenant.id : '/tenants'}" method="post" th:object="${tenant}">
+                <div class="mb-3">
+                    <label for="code" class="form-label" th:text="#{tenant.code}">Code <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" th:classappend="${#fields.hasErrors('code')} ? 'is-invalid'" id="code" th:field="*{code}" th:readonly="${tenant.id != null}">
+                    <div class="invalid-feedback" th:errors="*{code}">Error</div>
+                    <small class="form-text text-muted" th:text="#{tenant.code.help}">Unique alphanumeric code, e.g. acme</small>
+                </div>
+                <div class="mb-3">
+                    <label for="name" class="form-label" th:text="#{tenant.name}">Name <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" th:classappend="${#fields.hasErrors('name')} ? 'is-invalid'" id="name" th:field="*{name}">
+                    <div class="invalid-feedback" th:errors="*{name}">Error</div>
+                </div>
+                <div class="mb-3">
+                    <label for="description" class="form-label" th:text="#{tenant.description}">Description</label>
+                    <textarea class="form-control" id="description" rows="3" th:field="*{description}"></textarea>
+                </div>
+                <div class="mb-3">
+                    <label for="status" class="form-label" th:text="#{tenant.status}">Status</label>
+                    <select class="form-select" id="status" th:field="*{status}">
+                        <option value="ACTIVE" th:text="#{tenant.status.active}">Active</option>
+                        <option value="INACTIVE" th:text="#{tenant.status.inactive}">Inactive</option>
+                    </select>
+                </div>
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-primary"><i class="bi bi-save"></i> <span th:text="#{page.save}">Save</span></button>
+                    <a th:href="@{/tenants}" class="btn btn-secondary"><i class="bi bi-x-circle"></i> <span th:text="#{page.cancel}">Cancel</span></a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -60,4 +60,7 @@ build/
 ### VS Code ###
 .vscode/
 
+### Playwright MCP artifacts ###
+.playwright-mcp/
+
 

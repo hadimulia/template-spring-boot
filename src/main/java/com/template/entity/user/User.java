@@ -17,6 +17,7 @@ import lombok.ToString;
 @EqualsAndHashCode(callSuper = true)
 @Table(name = "users")
 public class User extends BaseEntity {
+    private Long tenantId;
     private String username;
     private String password;
     private String fullname;

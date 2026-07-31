@@ -4,6 +4,7 @@ import com.template.entity.user.User;
 import com.template.entity.user.UserRole;
 import com.template.mapper.user.UserMapper;
 import com.template.mapper.user.UserRoleMapper;
+import com.template.tenant.TenantContext;
 import com.template.util.SecurityUtils;
 import lombok.RequiredArgsConstructor;
 import org.apache.poi.ss.usermodel.*;
@@ -48,12 +49,13 @@ public class ExcelImportService {
                     continue;
                 }
 
-                if (userMapper.findByUsername(username) != null) {
+                if (userMapper.findByUsername(username, TenantContext.getTenantId()) != null) {
                     errors.add("Row " + (i + 1) + ": username '" + username + "' already exists");
                     continue;
                 }
 
                 User user = new User();
+                user.setTenantId(TenantContext.getTenantId());
                 user.setUsername(username);
                 user.setFullname(fullname.isBlank() ? username : fullname);
                 user.setEmail(email.isBlank() ? null : email);

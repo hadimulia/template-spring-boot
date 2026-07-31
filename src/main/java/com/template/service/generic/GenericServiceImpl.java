@@ -10,6 +10,9 @@ import java.util.List;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 
+import com.template.entity.tenant.Tenant;
+import com.template.tenant.TenantContext;
+
 import lombok.extern.slf4j.Slf4j;
 import tk.mybatis.mapper.common.Mapper;
 import tk.mybatis.mapper.entity.Condition;
@@ -35,19 +38,66 @@ public abstract class GenericServiceImpl<T,ID extends Serializable> implements G
 	}
 	
 	public List<T> getAll(){
-		return genericMapper.selectAll();
+		return genericMapper.selectByExample(buildScopedCondition());
 	}
-	
+
 	public List<T> getByCriteria(Condition condition){
+		applyTenantScope(condition);
 		return genericMapper.selectByExample(condition);
 	}
-	
+
 	public T getOneByCriteria(Condition condition){
+		applyTenantScope(condition);
 		return genericMapper.selectOneByExample(condition);
 	}
-	
+
 	public T get(ID id) {
-		return genericMapper.selectByPrimaryKey(id);
+		if (!isTenantScoped()) {
+			return genericMapper.selectByPrimaryKey(id);
+		}
+		Condition condition = new Condition(getEntityClass());
+		condition.createCriteria().andEqualTo("id", id).andEqualTo("tenantId", TenantContext.getTenantId());
+		return genericMapper.selectOneByExample(condition);
+	}
+
+	private boolean isTenantScoped() {
+		if (getEntityClass() == null || Tenant.class.isAssignableFrom(getEntityClass())) {
+			return false;
+		}
+		// Only scope entities that actually carry a tenant_id column.
+		// Global reference entities (Role, Menu, Permission, junctions) must not be scoped.
+		return hasTenantIdField();
+	}
+
+	private boolean hasTenantIdField() {
+		for (Class<?> clazz = getEntityClass(); clazz != null && clazz != Object.class; clazz = clazz.getSuperclass()) {
+			try {
+				clazz.getDeclaredField("tenantId");
+				return true;
+			} catch (NoSuchFieldException ignored) {
+				// continue
+			}
+		}
+		return false;
+	}
+
+	private Condition buildScopedCondition() {
+		Condition condition = new Condition(getEntityClass());
+		if (isTenantScoped() && TenantContext.getTenantId() != null) {
+			condition.createCriteria().andEqualTo("tenantId", TenantContext.getTenantId());
+		}
+		return condition;
+	}
+
+	private void applyTenantScope(Condition condition) {
+		if (!isTenantScoped() || TenantContext.getTenantId() == null) {
+			return;
+		}
+		if (condition.getOredCriteria().isEmpty()) {
+			condition.createCriteria().andEqualTo("tenantId", TenantContext.getTenantId());
+		} else {
+			condition.and().andEqualTo("tenantId", TenantContext.getTenantId());
+		}
 	}
 	
 	@Transactional(rollbackFor = Exception.class)

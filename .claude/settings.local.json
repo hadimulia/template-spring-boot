@@ -42,7 +42,11 @@
       "Bash(docker exec postgres *)",
       "Bash(grep -v '^--$')",
       "mcp__plugin_playwright_playwright__browser_fill_form",
-      "Bash(pkill -f \"spring-boot\")"
+      "Bash(pkill -f \"spring-boot\")",
+      "Bash(echo \"started, pid $!\")",
+      "mcp__plugin_playwright_playwright__browser_find",
+      "Bash(psql -U postgres -d template_db -c \"SELECT id, code, name, status, created_by, created_date, version FROM tenants ORDER BY id;\")",
+      "Bash(psql -U postgres -d template_db -c \"SELECT entity, action, entity_id, description, user_id, tenant_id, created_date FROM audit_logs ORDER BY id DESC LIMIT 5;\")"
     ]
   }
 }

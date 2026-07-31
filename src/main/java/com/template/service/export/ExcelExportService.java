@@ -2,6 +2,7 @@ package com.template.service.export;
 
 import com.template.dto.user.UserResponse;
 import com.template.mapper.user.UserMapper;
+import com.template.tenant.TenantContext;
 import lombok.RequiredArgsConstructor;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -18,7 +19,7 @@ public class ExcelExportService {
     private final UserMapper userMapper;
 
     public byte[] exportUsersToExcel(String keyword) throws IOException {
-        List<UserResponse> users = userMapper.findAll(keyword, 0, Integer.MAX_VALUE);
+        List<UserResponse> users = userMapper.findAll(keyword, TenantContext.getTenantId(), 0, Integer.MAX_VALUE);
 
         try (Workbook workbook = new XSSFWorkbook()) {
             Sheet sheet = workbook.createSheet("Users");
