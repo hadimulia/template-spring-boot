@@ -7,9 +7,9 @@ import lombok.Data;
 public class PermissionRequest {
     private Long id;
 
-    @NotBlank(message = "Code is required")
+    @NotBlank(message = "{validation.permission.code.required}")
     private String code;
 
-    @NotBlank(message = "Description is required")
+    @NotBlank(message = "{validation.permission.description.required}")
     private String description;
 }

@@ -8,7 +8,7 @@ import java.util.List;
 public class RoleRequest {
     private Long id;
 
-    @NotBlank(message = "Role name is required")
+    @NotBlank(message = "{validation.role.name.required}")
     private String name;
 
     private String description;

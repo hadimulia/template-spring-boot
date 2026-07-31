@@ -1,5 +1,7 @@
 package com.template.validator.user;
 
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 
@@ -16,7 +18,7 @@ import lombok.RequiredArgsConstructor;
 public class UserFormValidator implements ConstraintValidator<ValidUserForm, UserUpdateRequest>  {
 
     private final UserService userService;
-
+    private final MessageSource messageSource;
 
     @Override
     public boolean isValid(UserUpdateRequest form,
@@ -27,39 +29,32 @@ public class UserFormValidator implements ConstraintValidator<ValidUserForm, Use
         context.disableDefaultConstraintViolation();
         User user = userService.get(form.getId());
 
-        // password required for create
-        if (
-            (!ObjectUtils.isEmpty(form.getPassword()) && form.getPassword().length() < 6) ) {
-
-            context.buildConstraintViolationWithTemplate("Password must be at least 6 characters")
+        if (!ObjectUtils.isEmpty(form.getPassword()) && form.getPassword().length() < 6) {
+            context.buildConstraintViolationWithTemplate(resolve("validation.password.minlength"))
                     .addPropertyNode("password")
                     .addConstraintViolation();
-
             valid = false;
         }
 
-        // email exists
-			User existingUser = userService.getByEmail(form.getEmail());
-		  if (!ObjectUtils.isEmpty(form.getEmail()) && !ObjectUtils.isEmpty(existingUser) && !existingUser.getId().equals(form.getId())) {
-			  
-		  
-		  context.buildConstraintViolationWithTemplate("Email already exists")
-		  .addPropertyNode("email") .addConstraintViolation();
-		  
-		  valid = false; }
-		 
-        
-		if (ObjectUtils.isEmpty(form.getFullname())) {
+        User existingUser = userService.getByEmail(form.getEmail());
+        if (!ObjectUtils.isEmpty(form.getEmail()) && !ObjectUtils.isEmpty(existingUser) && !existingUser.getId().equals(form.getId())) {
+            context.buildConstraintViolationWithTemplate(resolve("validation.email.exists"))
+                    .addPropertyNode("email")
+                    .addConstraintViolation();
+            valid = false;
+        }
 
-			context.buildConstraintViolationWithTemplate("Fullname is required")
-					.addPropertyNode("fullname")
-					.addConstraintViolation();
-
-			valid = false;
-		}
-        
-        
+        if (ObjectUtils.isEmpty(form.getFullname())) {
+            context.buildConstraintViolationWithTemplate(resolve("validation.fullname.required"))
+                    .addPropertyNode("fullname")
+                    .addConstraintViolation();
+            valid = false;
+        }
 
         return valid;
+    }
+
+    private String resolve(String code) {
+        return messageSource.getMessage(code, null, code, LocaleContextHolder.getLocale());
     }
 }

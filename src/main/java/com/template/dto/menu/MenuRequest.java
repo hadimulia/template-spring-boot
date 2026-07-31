@@ -8,7 +8,7 @@ public class MenuRequest {
     private Long id;
     private Long parentId;
 
-    @NotBlank(message = "Menu name is required")
+    @NotBlank(message = "{validation.menu.name.required}")
     private String name;
 
     private String url;

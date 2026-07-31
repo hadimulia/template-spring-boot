@@ -19,7 +19,9 @@ import com.template.dto.menu.MenuResponse;
 import com.template.dto.menu.MenuTreeNode;
 import com.template.dto.PageResult;
 import com.template.entity.menu.Menu;
+import com.template.entity.role.Role;
 import com.template.mapper.menu.MenuMapper;
+import com.template.mapper.role.RoleMapper;
 import com.template.service.audit.Auditable;
 import com.template.service.generic.GenericServiceImpl;
 import com.template.util.MenuTreeBuilder;
@@ -33,10 +35,12 @@ import lombok.extern.slf4j.Slf4j;
 public class MenuServiceImpl extends GenericServiceImpl<Menu, Long> implements MenuService{
 
     private final MenuMapper menuMapper;
+    private final RoleMapper roleMapper;
 
-    public MenuServiceImpl(MenuMapper mapper) {
+    public MenuServiceImpl(MenuMapper mapper, RoleMapper roleMapper) {
         super(mapper);
         this.menuMapper = mapper;
+        this.roleMapper = roleMapper;
     }
 
     private static final String SESSION_MENU_TREE_KEY = "menuTreeCache";
@@ -70,13 +74,26 @@ public class MenuServiceImpl extends GenericServiceImpl<Menu, Long> implements M
     }
 
     private List<MenuTreeNode> buildMenuTree(Authentication auth) {
-        Set<String> roleNames = auth.getAuthorities().stream()
-                .map(GrantedAuthority::getAuthority)
-                .filter(a -> a.startsWith("ROLE_"))
-                .map(a -> a.substring(5))
-                .collect(Collectors.toSet());
+        List<String> roleNames = new ArrayList<>();
+        Long userId = SecurityUtils.getCurrentUserId();
+        if (userId != null) {
+            List<Role> roles = roleMapper.findByUserId(userId);
+            roleNames = roles.stream().map(Role::getName).collect(Collectors.toList());
+        }
+        // Fallback: extract ROLE_ authorities from auth when DB lookup returns nothing
+        if (roleNames.isEmpty()) {
+            roleNames = auth.getAuthorities().stream()
+                    .map(GrantedAuthority::getAuthority)
+                    .filter(a -> a.startsWith("ROLE_"))
+                    .map(a -> a.substring(5))
+                    .collect(Collectors.toList());
+        }
 
-        List<Menu> menus = menuMapper.findByRoleNames(new ArrayList<>(roleNames));
+        if (roleNames.isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        List<Menu> menus = menuMapper.findByRoleNames(roleNames);
         return MenuTreeBuilder.buildTree(menus);
     }
 
