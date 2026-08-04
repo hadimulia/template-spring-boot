@@ -23,14 +23,19 @@ import java.util.concurrent.ConcurrentHashMap;
 public class TenantDataSource extends AbstractRoutingDataSource {
 
     private static final Logger log = LoggerFactory.getLogger(TenantDataSource.class);
+    private static final String SYSTEM_KEY = "system";
 
     private final DataSource registryDataSource;
     private final SchoolDataSourceManager manager;
+    private final SystemDataSourceManager systemManager;
     private final Map<String, DataSource> schoolDataSources = new ConcurrentHashMap<>();
 
-    public TenantDataSource(DataSource registryDataSource, SchoolDataSourceManager manager) {
+    public TenantDataSource(DataSource registryDataSource,
+                            SchoolDataSourceManager manager,
+                            SystemDataSourceManager systemManager) {
         this.registryDataSource = registryDataSource;
         this.manager = manager;
+        this.systemManager = systemManager;
         setDefaultTargetDataSource(registryDataSource);
         setTargetDataSources(new ConcurrentHashMap<>());
         afterPropertiesSet();
@@ -52,6 +57,9 @@ public class TenantDataSource extends AbstractRoutingDataSource {
             return registryDataSource;
         }
         String dbName = (String) key;
+        if (SYSTEM_KEY.equals(dbName)) {
+            return systemManager.getOrCreate();
+        }
         return schoolDataSources.computeIfAbsent(dbName, name -> {
             log.info("Initializing school database {}", name);
             return manager.getOrCreateByDbName(name);

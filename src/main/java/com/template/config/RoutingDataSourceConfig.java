@@ -18,8 +18,10 @@ public class RoutingDataSourceConfig {
 
     @Bean
     @Primary
-    public DataSource dataSource(DataSource registryDataSource, SchoolDataSourceManager manager) {
-        return new TenantDataSource(registryDataSource, manager);
+    public DataSource dataSource(DataSource registryDataSource,
+                                 SchoolDataSourceManager manager,
+                                 SystemDataSourceManager systemManager) {
+        return new TenantDataSource(registryDataSource, manager, systemManager);
     }
 
     /**
