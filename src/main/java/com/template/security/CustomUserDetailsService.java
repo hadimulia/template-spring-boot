@@ -6,15 +6,10 @@ import java.util.Set;
 
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.LockedException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.stereotype.Service;
 
 import com.template.config.SchoolDataSourceManager;
@@ -34,7 +29,8 @@ import com.template.tenant.TenantContext;
 import lombok.RequiredArgsConstructor;
 
 /**
- * Authenticates across two realms, chosen by the login form's school code:
+ * Builds {@link CustomUserDetails} across two realms, chosen by the login form's
+ * school code:
  * <ol>
  *   <li>System realm (code {@code system}): loads the master admin from
  *       {@code sims_system} to control all schools.</li>
@@ -43,13 +39,17 @@ import lombok.RequiredArgsConstructor;
  *       then loads credentials/RBAC from that school's database (auto-provisioning
  *       it on first login via {@link SchoolDataSourceManager}).</li>
  * </ol>
+ * <p>
+ * This is not a {@code UserDetailsService} for Spring's default provider; it is
+ * called by {@link MultiRealmAuthenticationProvider} which has the school code
+ * available from the authentication token's details at login time.
  */
 @Service
 @RequiredArgsConstructor
-public class CustomUserDetailsService implements UserDetailsService {
+public class CustomUserDetailsService {
 
-    private static final String SYSTEM_CODE = "system";
-    private static final String SYSTEM_DB_NAME = "sims_system";
+    public static final String SYSTEM_CODE = "system";
+    public static final String SYSTEM_DB_NAME = "sims_system";
 
     private final UserMapper userMapper;
     private final RoleMapper roleMapper;
@@ -59,27 +59,11 @@ public class CustomUserDetailsService implements UserDetailsService {
     private final SchoolDataSourceManager schoolDataSourceManager;
     private final SystemDataSourceManager systemDataSourceManager;
 
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        String schoolCode = currentSchoolCode();
+    public UserDetails loadUserByUsername(String username, String schoolCode) {
         if (SYSTEM_CODE.equalsIgnoreCase(schoolCode)) {
             return loadSystemUser(username);
         }
         return loadSchoolUser(username, schoolCode);
-    }
-
-    private String currentSchoolCode() {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if (auth instanceof UsernamePasswordAuthenticationToken token
-                && token.getDetails() instanceof WebAuthenticationDetails details) {
-            if (details instanceof SchoolCodeWebAuthenticationDetails sc) {
-                String code = sc.getSchoolCode();
-                if (code != null && !code.isBlank()) {
-                    return code.trim();
-                }
-            }
-        }
-        throw new UsernameNotFoundException("School code is required");
     }
 
     private UserDetails loadSchoolUser(String username, String schoolCode) {
