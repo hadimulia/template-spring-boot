@@ -35,11 +35,20 @@
 
                         <form th:action="@{/login}" method="post">
                             <div class="mb-3">
+                                <label for="schoolCode" class="form-label" th:text="#{login.schoolCode}">School Code</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="bi bi-building"></i></span>
+                                    <input type="text" id="schoolCode" name="schoolCode"
+                                           class="form-control" th:placeholder="#{login.schoolCode.placeholder}" required autofocus>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
                                 <label for="username" class="form-label" th:text="#{user.username}">Username</label>
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="bi bi-person"></i></span>
                                     <input type="text" id="username" name="username"
-                                           class="form-control" th:placeholder="#{login.username.placeholder}" required autofocus>
+                                           class="form-control" th:placeholder="#{login.username.placeholder}" required>
                                 </div>
                             </div>
 
