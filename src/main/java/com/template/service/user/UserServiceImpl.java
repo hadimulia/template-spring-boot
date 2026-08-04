@@ -117,6 +117,8 @@ public class UserServiceImpl extends GenericServiceImpl<User, Long> implements U
     public void update(Long id, UserUpdateRequest request) {
         User user = get(id);
         if (user != null) {
+            boolean usernameChanged = request.getUsername() != null
+                    && !request.getUsername().equals(user.getUsername());
             user.setUsername(request.getUsername());
             user.setFullname(request.getFullname());
             user.setEmail(request.getEmail());
@@ -150,6 +152,24 @@ public class UserServiceImpl extends GenericServiceImpl<User, Long> implements U
                     userRoleMapper.insert(userRole);
                 }
             }
+
+            if (usernameChanged) {
+                syncUserIndex(id, request.getUsername());
+            }
+        }
+    }
+
+    private void syncUserIndex(Long userId, String newUsername) {
+        Long schoolId = SecurityUtils.getCurrentSchoolId();
+        if (schoolId == null) {
+            return; // system realm has no per-school index to sync
+        }
+        SchoolUser index = schoolUserMapper.findByUserIdAndSchool(userId, schoolId);
+        if (index != null) {
+            index.setUsername(newUsername);
+            index.setUpdatedBy(SecurityUtils.getCurrentUsername());
+            index.setUpdatedDate(LocalDateTime.now());
+            schoolUserMapper.updateByPrimaryKey(index);
         }
     }
 
