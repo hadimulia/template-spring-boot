@@ -29,6 +29,16 @@ public class SecurityUtils {
         return null;
     }
 
+    public static Long getCurrentSchoolId() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth != null && auth.isAuthenticated()
+                && !(auth instanceof AnonymousAuthenticationToken)
+                && auth.getPrincipal() instanceof CustomUserDetails details) {
+            return details.getSchoolId();
+        }
+        return null;
+    }
+
     public static String getCurrentIpAddress() {
         ServletRequestAttributes attrs = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         if (attrs != null) {
