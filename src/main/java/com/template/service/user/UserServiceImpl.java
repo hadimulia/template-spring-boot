@@ -4,11 +4,13 @@ import com.template.dto.PageResult;
 import com.template.dto.user.UserRequest;
 import com.template.dto.user.UserResponse;
 import com.template.dto.user.UserUpdateRequest;
+import com.template.entity.registry.SchoolUser;
 import com.template.entity.user.User;
 import com.template.entity.user.UserRole;
 import com.template.mapper.role.RoleMapper;
 import com.template.mapper.user.UserMapper;
 import com.template.mapper.user.UserRoleMapper;
+import com.template.registry.mapper.SchoolUserMapper;
 import com.template.service.audit.Auditable;
 import com.template.service.generic.GenericServiceImpl;
 import com.template.util.SecurityUtils;
@@ -28,16 +30,19 @@ public class UserServiceImpl extends GenericServiceImpl<User, Long> implements U
     private final UserRoleMapper userRoleMapper;
     private final RoleMapper roleMapper;
     private final PasswordEncoder passwordEncoder;
+    private final SchoolUserMapper schoolUserMapper;
 
     public UserServiceImpl(UserMapper userMapper,
                            UserRoleMapper userRoleMapper,
                            RoleMapper roleMapper,
-                           PasswordEncoder passwordEncoder) {
+                           PasswordEncoder passwordEncoder,
+                           SchoolUserMapper schoolUserMapper) {
         super(userMapper);
         this.userMapper = userMapper;
         this.userRoleMapper = userRoleMapper;
         this.roleMapper = roleMapper;
         this.passwordEncoder = passwordEncoder;
+        this.schoolUserMapper = schoolUserMapper;
     }
 
     @Transactional(readOnly = true)
@@ -61,6 +66,10 @@ public class UserServiceImpl extends GenericServiceImpl<User, Long> implements U
 
     @Auditable(action = "CREATE", entityType = "USER", description = "#request.username")
     public void create(UserRequest request) {
+        if (userMapper.findByUsername(request.getUsername()) != null) {
+            throw new IllegalArgumentException("Username already exists in this school: " + request.getUsername());
+        }
+
         User user = new User();
         user.setUsername(request.getUsername());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
@@ -85,6 +94,23 @@ public class UserServiceImpl extends GenericServiceImpl<User, Long> implements U
                 userRoleMapper.insert(userRole);
             }
         }
+
+        createUserIndex(user);
+    }
+
+    private void createUserIndex(User user) {
+        Long schoolId = SecurityUtils.getCurrentSchoolId();
+        if (schoolId == null) {
+            throw new IllegalStateException("No school context for user creation");
+        }
+        SchoolUser index = new SchoolUser();
+        index.setSchoolId(schoolId);
+        index.setUserId(user.getId());
+        index.setUsername(user.getUsername());
+        index.setEnabled(true);
+        index.setCreatedBy(SecurityUtils.getCurrentUsername());
+        index.setDeleted(false);
+        schoolUserMapper.insertSelective(index);
     }
 
     @Auditable(action = "UPDATE", entityType = "USER", description = "#request.username")
