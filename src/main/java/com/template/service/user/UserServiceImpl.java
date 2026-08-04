@@ -181,6 +181,17 @@ public class UserServiceImpl extends GenericServiceImpl<User, Long> implements U
             user.setUpdatedBy(SecurityUtils.getCurrentUsername());
             user.setUpdatedDate(LocalDateTime.now());
             userMapper.updateByPrimaryKey(user);
+
+            Long schoolId = SecurityUtils.getCurrentSchoolId();
+            if (schoolId != null) {
+                SchoolUser index = schoolUserMapper.findByUserIdAndSchool(id, schoolId);
+                if (index != null) {
+                    index.setDeleted(true);
+                    index.setUpdatedBy(SecurityUtils.getCurrentUsername());
+                    index.setUpdatedDate(LocalDateTime.now());
+                    schoolUserMapper.updateByPrimaryKey(index);
+                }
+            }
         }
     }
 
