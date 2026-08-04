@@ -12,4 +12,6 @@ public interface SchoolUserMapper extends Mapper<SchoolUser> {
     SchoolUser findByUsername(@Param("username") String username);
 
     SchoolUser findByUserIdAndSchool(@Param("userId") Long userId, @Param("schoolId") Long schoolId);
+
+    SchoolUser findBySchoolAndUsername(@Param("schoolId") Long schoolId, @Param("username") String username);
 }

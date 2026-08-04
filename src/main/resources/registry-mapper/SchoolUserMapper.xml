@@ -23,4 +23,9 @@
         SELECT * FROM school_users WHERE user_id = #{userId} AND school_id = #{schoolId} AND deleted = false
     </select>
 
+    <select id="findBySchoolAndUsername" resultMap="schoolUserMap">
+        SELECT * FROM school_users
+        WHERE school_id = #{schoolId} AND username = #{username} AND deleted = false
+    </select>
+
 </mapper>
