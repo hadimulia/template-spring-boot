@@ -11,8 +11,10 @@ import com.template.config.SchoolDataSourceManager;
 import com.template.dto.PageResult;
 import com.template.dto.school.SchoolRequest;
 import com.template.dto.school.SchoolResponse;
+import com.template.entity.registry.SchoolUser;
 import com.template.entity.school.School;
 import com.template.registry.mapper.SchoolMapper;
+import com.template.registry.mapper.SchoolUserMapper;
 import com.template.service.audit.Auditable;
 import com.template.service.generic.GenericServiceImpl;
 import com.template.util.SecurityUtils;
@@ -22,11 +24,14 @@ import com.template.util.SecurityUtils;
 public class SchoolServiceImpl extends GenericServiceImpl<School, Long> implements SchoolService {
 
     private final SchoolMapper schoolMapper;
+    private final SchoolUserMapper schoolUserMapper;
     private final SchoolDataSourceManager schoolDataSourceManager;
 
-    public SchoolServiceImpl(SchoolMapper schoolMapper, SchoolDataSourceManager schoolDataSourceManager) {
+    public SchoolServiceImpl(SchoolMapper schoolMapper, SchoolUserMapper schoolUserMapper,
+                             SchoolDataSourceManager schoolDataSourceManager) {
         super(schoolMapper);
         this.schoolMapper = schoolMapper;
+        this.schoolUserMapper = schoolUserMapper;
         this.schoolDataSourceManager = schoolDataSourceManager;
     }
 
@@ -64,6 +69,17 @@ public class SchoolServiceImpl extends GenericServiceImpl<School, Long> implemen
         school.setDeleted(false);
         school.setVersion(0);
         save(school);
+
+        // Every school DB is seeded with an 'admin' user (user_id 1) by the school
+        // migration set. Index it globally so the school is immediately login-able.
+        SchoolUser index = new SchoolUser();
+        index.setSchoolId(school.getId());
+        index.setUserId(1L);
+        index.setUsername("admin");
+        index.setEnabled(true);
+        index.setCreatedBy(SecurityUtils.getCurrentUsername());
+        index.setDeleted(false);
+        schoolUserMapper.insertSelective(index);
     }
 
     @Auditable(action = "UPDATE", entityType = "SCHOOL", description = "#request.code")
