@@ -1,9 +1,6 @@
-spring:
-  datasource:
-    url: jdbc:postgresql://localhost:5432/template_db
-    username: postgres
-    password: postgres
-
+# Dev profile: overrides for local PostgreSQL. Registry + school datasource
+# settings live in application.yml with sensible localhost defaults; this file
+# only tunes logging.
 logging:
   level:
     org.springframework.web: INFO
