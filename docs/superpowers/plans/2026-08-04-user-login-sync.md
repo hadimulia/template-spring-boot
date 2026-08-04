@@ -383,6 +383,11 @@ git commit -m "chore: verification fixups"
 
 ---
 
+## Execution Notes
+
+- **Username is read-only in the edit UI** (`templates/user/form.html` uses `th:readonly="${user.id != null}"`). So a rename via the UI always submits the unchanged username and `usernameChanged` is `false` — Task 3's sync path is defensive (unreachable via UI) but correct for other flows (API/import). Verified at the code level; UI rename is intentionally disabled.
+- During E2E, school `xyz` was found `INACTIVE` in the registry (an `UPDATE` in an earlier session). Tests used school `coba` (ACTIVE) and `baru` instead.
+
 ## Self-Review Notes
 
 - **Spec coverage:** getCurrentSchoolId (T1), create index (T2), duplicate check (T2), update sync (T3), delete sync (T4), Playwright E2E (T5). All spec sections map to tasks.
