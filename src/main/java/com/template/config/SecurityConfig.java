@@ -3,6 +3,7 @@ package com.template.config;
 import com.template.security.CustomAuthenticationFailureHandler;
 import com.template.security.CustomAuthenticationSuccessHandler;
 import com.template.security.CustomUserDetailsService;
+import com.template.security.SchoolCodeAuthenticationDetailsSource;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -39,6 +40,7 @@ public class SecurityConfig {
                         .loginProcessingUrl("/login")
                         .usernameParameter("username")
                         .passwordParameter("password")
+                        .authenticationDetailsSource(new SchoolCodeAuthenticationDetailsSource())
                         .successHandler(successHandler)
                         .failureHandler(failureHandler)
                         .permitAll()
