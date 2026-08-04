@@ -154,9 +154,9 @@ CREATE TABLE role_menus (
     UNIQUE(role_id, menu_id)
 );
 
--- Seed: system admin (password: admin123, same hash as school V3)
+-- Seed: system admin (password: admin123, same corrected hash as school V4)
 INSERT INTO users (username, password, fullname, email, enabled, created_by)
-VALUES ('admin', '$2a$10$i8.1.j4j.iZp2GkL7c5y8uJndnZJ0Z0mF/b.yH/y.xY1c2W5N6OqG',
+VALUES ('admin', '$2a$10$mL1Onwq9YlVNKfLngsghbujC4ueZSSaT8kJ/Urz/Z6O.5W1e1C4Kq',
         'System Administrator', 'admin@system', true, 'system');
 
 INSERT INTO roles (name, description, created_by) VALUES ('SYSTEM', 'System Administrator', 'system');
@@ -970,6 +970,16 @@ git commit -m "chore: verification fixups"
 ```
 
 ---
+
+## Execution Deviations
+
+Two deviations were required during implementation (all verified end-to-end):
+
+1. **Custom `MultiRealmAuthenticationProvider` instead of Context-reading** — the plan's Task 6 read the school code from `SecurityContextHolder` inside `loadUserByUsername(String)`, but the SecurityContext is empty during login authentication, so the code was never captured. Replaced with `MultiRealmAuthenticationProvider` (an `AuthenticationProvider`) that reads `schoolCode` from the token's `SchoolCodeWebAuthenticationDetails` and delegates to `CustomUserDetailsService.loadUserByUsername(username, schoolCode)`. This also meant `CustomUserDetailsService` no longer implements `UserDetailsService`; remember-me was dropped (multi-school auto-login has no school code).
+
+2. **System realm `audit_logs` table (`db/system/V2`).** Creating a school as the system admin threw `relation "audit_logs" does not exist` because the `@Auditable` aspect writes the audit log to `sims_system`, which V1 hadn't created. Added V2 with `audit_logs` + AUDIT_VIEW grant.
+
+Also, `CustomUserDetails.buildDetails` routes the system realm by the **`system` key** (not the literal db name `sims_system`), so `TenantDataSource` routes to the system pool instead of creating a duplicate `school-sims_system` pool.
 
 ## Self-Review Notes
 
