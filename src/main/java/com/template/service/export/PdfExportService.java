@@ -5,7 +5,6 @@ import com.lowagie.text.Font;
 import com.lowagie.text.pdf.*;
 import com.template.dto.user.UserResponse;
 import com.template.mapper.user.UserMapper;
-import com.template.tenant.TenantContext;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -21,7 +20,7 @@ public class PdfExportService {
     private final UserMapper userMapper;
 
     public byte[] exportUsersToPdf(String keyword) throws DocumentException, IOException {
-        List<UserResponse> users = userMapper.findAll(keyword, TenantContext.getTenantId(), 0, Integer.MAX_VALUE);
+        List<UserResponse> users = userMapper.findAll(keyword, 0, Integer.MAX_VALUE);
 
         try (ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
             Document document = new Document(PageSize.A4.rotate());

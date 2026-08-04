@@ -10,11 +10,10 @@ import java.util.List;
 public interface ApprovalRequestMapper extends Mapper<ApprovalRequest> {
 
     List<ApprovalRequestResponse> findPage(@Param("keyword") String keyword,
-                                            @Param("tenantId") Long tenantId,
                                             @Param("offset") int offset,
                                             @Param("limit") int limit);
 
-    int countPage(@Param("keyword") String keyword, @Param("tenantId") Long tenantId);
+    int countPage(@Param("keyword") String keyword);
 
-    List<ApprovalRequestResponse> findPending(@Param("tenantId") Long tenantId);
+    List<ApprovalRequestResponse> findPending();
 }

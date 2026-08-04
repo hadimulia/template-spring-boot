@@ -1,8 +1,8 @@
 package com.template.service.session;
 
 import com.template.dto.session.SessionInfo;
-import com.template.entity.user.User;
-import com.template.mapper.user.UserMapper;
+import com.template.entity.registry.SchoolUser;
+import com.template.registry.mapper.SchoolUserMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.session.SessionInformation;
 import org.springframework.security.core.session.SessionRegistry;
@@ -20,7 +20,7 @@ public class SessionService {
 
     private final SessionRegistry sessionRegistry;
     private final SessionStore sessionStore;
-    private final UserMapper userMapper;
+    private final SchoolUserMapper schoolUserMapper;
 
     public List<SessionInfo> getActiveSessions(String currentUsername) {
         List<SessionInfo> sessions = new ArrayList<>();
@@ -34,9 +34,9 @@ public class SessionService {
                     String username = userDetails.getUsername();
                     String fullname = username;
 
-                    User user = userMapper.findByUsername(username, null);
-                    if (user != null) {
-                        fullname = user.getFullname();
+                    SchoolUser index = schoolUserMapper.findByUsername(username);
+                    if (index != null) {
+                        fullname = username; // fullname lives in the school DB user row
                     }
 
                     var meta = sessionMetaMap.get(si.getSessionId());

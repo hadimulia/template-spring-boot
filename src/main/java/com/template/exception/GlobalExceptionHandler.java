@@ -12,8 +12,11 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.util.Map;
 
+@Slf4j
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
@@ -53,6 +56,7 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public String handleGeneral(Exception ex, HttpServletRequest request,
                                 org.springframework.ui.Model model) {
+        log.error("Unhandled exception on {}: {}", request.getRequestURL(), ex.getMessage(), ex);
         model.addAttribute("message", "An unexpected error occurred");
         model.addAttribute("detail", ex.getMessage());
         model.addAttribute("requestUrl", request.getRequestURL());

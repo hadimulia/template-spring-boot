@@ -5,7 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import tk.mybatis.spring.annotation.MapperScan;
 
 @SpringBootApplication
-@MapperScan({"com.template.mapper"})
+@MapperScan(basePackages = "com.template.mapper", sqlSessionFactoryRef = "sqlSessionFactory")
 public class TemplateApplication {
 
     public static void main(String[] args) {

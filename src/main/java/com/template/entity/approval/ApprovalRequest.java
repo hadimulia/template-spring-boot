@@ -18,7 +18,6 @@ import lombok.ToString;
 public class ApprovalRequest {
     @Id
     private Long id;
-    private Long tenantId;
     private String entityType;
     private Long entityId;
     private String requestType;

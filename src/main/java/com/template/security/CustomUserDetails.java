@@ -10,12 +10,17 @@ import java.util.Collection;
 public class CustomUserDetails extends User {
 
     private final Long userId;
-    private final Long tenantId;
+    private final Long schoolId;
+    private final String schoolCode;
+    private final String schoolDbName;
 
-    public CustomUserDetails(Long userId, Long tenantId, String username, String password,
+    public CustomUserDetails(Long userId, Long schoolId, String schoolCode, String schoolDbName,
+                             String username, String password,
                              Collection<? extends GrantedAuthority> authorities) {
         super(username, password, authorities);
         this.userId = userId;
-        this.tenantId = tenantId;
+        this.schoolId = schoolId;
+        this.schoolCode = schoolCode;
+        this.schoolDbName = schoolDbName;
     }
 }

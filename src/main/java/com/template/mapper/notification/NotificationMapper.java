@@ -10,15 +10,14 @@ import java.util.List;
 public interface NotificationMapper extends Mapper<Notification> {
 
     List<NotificationResponse> findByUserId(@Param("userId") Long userId,
-                                            @Param("tenantId") Long tenantId,
                                             @Param("offset") int offset,
                                             @Param("limit") int limit);
 
-    int countByUserId(@Param("userId") Long userId, @Param("tenantId") Long tenantId);
+    int countByUserId(@Param("userId") Long userId);
 
-    int countUnreadByUserId(@Param("userId") Long userId, @Param("tenantId") Long tenantId);
+    int countUnreadByUserId(@Param("userId") Long userId);
 
-    void markAsRead(@Param("id") Long id, @Param("userId") Long userId, @Param("tenantId") Long tenantId);
+    void markAsRead(@Param("id") Long id, @Param("userId") Long userId);
 
-    void markAllAsRead(@Param("userId") Long userId, @Param("tenantId") Long tenantId);
+    void markAllAsRead(@Param("userId") Long userId);
 }

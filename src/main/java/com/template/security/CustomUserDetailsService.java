@@ -12,17 +12,31 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
+import com.template.config.SchoolDataSourceManager;
 import com.template.entity.permission.Permission;
+import com.template.entity.registry.SchoolUser;
 import com.template.entity.role.Role;
+import com.template.entity.school.School;
 import com.template.entity.user.User;
 import com.template.mapper.permission.PermissionMapper;
 import com.template.mapper.role.RoleMapper;
 import com.template.mapper.user.UserMapper;
+import com.template.registry.mapper.SchoolMapper;
+import com.template.registry.mapper.SchoolUserMapper;
+import com.template.tenant.TenantContext;
 
 import lombok.RequiredArgsConstructor;
 
+/**
+ * Authenticates across two realms:
+ * <ol>
+ *   <li>Registry realm: resolves the username in {@code school_users} and reads
+ *       the school ({@code schools}) to get its database name.</li>
+ *   <li>School realm: loads credentials, roles and permissions from that school's
+ *       database (auto-provisioning it on first login via {@link SchoolDataSourceManager}).</li>
+ * </ol>
+ */
 @Service
 @RequiredArgsConstructor
 public class CustomUserDetailsService implements UserDetailsService {
@@ -30,43 +44,66 @@ public class CustomUserDetailsService implements UserDetailsService {
     private final UserMapper userMapper;
     private final RoleMapper roleMapper;
     private final PermissionMapper permissionMapper;
+    private final SchoolUserMapper schoolUserMapper;
+    private final SchoolMapper schoolMapper;
+    private final SchoolDataSourceManager schoolDataSourceManager;
 
     @Override
-    @Transactional(readOnly = true)
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        // Global lookup during login: usernames are unique across tenants,
-        // the resolved tenantId is carried into the principal.
-        User user = userMapper.findByUsername(username, null);
-        if (user == null) {
+        SchoolUser index = schoolUserMapper.findByUsername(username);
+        if (index == null) {
             throw new UsernameNotFoundException("User not found with username: " + username);
         }
-
-        if (!user.getEnabled()) {
+        if (!Boolean.TRUE.equals(index.getEnabled())) {
             throw new DisabledException("Account is disabled");
         }
 
-        if (user.getAccountLocked()) {
-            throw new LockedException("Account is locked");
+        School school = schoolMapper.selectByPrimaryKey(index.getSchoolId());
+        if (school == null || Boolean.TRUE.equals(school.getDeleted())
+                || !"ACTIVE".equals(school.getStatus())) {
+            throw new UsernameNotFoundException("School not found or inactive for username: " + username);
         }
 
-        List<Role> roles = roleMapper.findByUserId(user.getId());
+        // Route to the school database and (re)load credentials/RBAC from it.
+        TenantContext.setRoutingKey(school.getDbName());
+        TenantContext.setTenantId(school.getId());
+        try {
+            schoolDataSourceManager.getOrCreate(school.getCode());
 
-        Set<GrantedAuthority> authorities = new HashSet<>();
-        for (Role role : roles) {
-            authorities.add(new SimpleGrantedAuthority("ROLE_" + role.getName()));
-
-            List<Permission> permissions = permissionMapper.findByRoleId(role.getId());
-            for (Permission permission : permissions) {
-                authorities.add(new SimpleGrantedAuthority(permission.getCode()));
+            User user = userMapper.selectByPrimaryKey(index.getUserId());
+            if (user == null) {
+                throw new UsernameNotFoundException("User not found with username: " + username);
             }
-        }
+            if (!user.getEnabled()) {
+                throw new DisabledException("Account is disabled");
+            }
+            if (user.getAccountLocked()) {
+                throw new LockedException("Account is locked");
+            }
 
-        return new CustomUserDetails(
-                user.getId(),
-                user.getTenantId(),
-                user.getUsername(),
-                user.getPassword(),
-                authorities
-        );
+            List<Role> roles = roleMapper.findByUserId(user.getId());
+
+            Set<GrantedAuthority> authorities = new HashSet<>();
+            for (Role role : roles) {
+                authorities.add(new SimpleGrantedAuthority("ROLE_" + role.getName()));
+
+                List<Permission> permissions = permissionMapper.findByRoleId(role.getId());
+                for (Permission permission : permissions) {
+                    authorities.add(new SimpleGrantedAuthority(permission.getCode()));
+                }
+            }
+
+            return new CustomUserDetails(
+                    user.getId(),
+                    school.getId(),
+                    school.getCode(),
+                    school.getDbName(),
+                    user.getUsername(),
+                    user.getPassword(),
+                    authorities
+            );
+        } finally {
+            TenantContext.clear();
+        }
     }
 }

@@ -8,7 +8,7 @@ import tk.mybatis.mapper.common.Mapper;
 import java.util.List;
 
 public interface FileUploadMapper extends Mapper<FileUpload> {
-    List<FileUploadResponse> findByEntity(@Param("entityType") String entityType, @Param("entityId") Long entityId, @Param("tenantId") Long tenantId);
+    List<FileUploadResponse> findByEntity(@Param("entityType") String entityType, @Param("entityId") Long entityId);
 
-    List<FileUploadResponse> findAll(@Param("tenantId") Long tenantId);
+    List<FileUploadResponse> findAll();
 }

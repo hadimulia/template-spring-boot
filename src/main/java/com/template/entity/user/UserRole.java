@@ -15,7 +15,6 @@ import lombok.ToString;
 @EqualsAndHashCode(callSuper = true)
 @Table(name = "user_roles")
 public class UserRole extends BaseEntity {
-    private Long tenantId;
     private Long userId;
     private Long roleId;
 }

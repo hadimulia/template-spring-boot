@@ -3,7 +3,6 @@ package com.template.service.file;
 import com.template.dto.file.FileUploadResponse;
 import com.template.entity.file.FileUpload;
 import com.template.mapper.file.FileUploadMapper;
-import com.template.tenant.TenantContext;
 import com.template.util.SecurityUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -37,7 +36,6 @@ public class FileUploadServiceImpl implements FileUploadService {
             Files.copy(file.getInputStream(), targetDir.resolve(storedName));
 
             FileUpload entity = new FileUpload();
-            entity.setTenantId(TenantContext.getTenantId());
             entity.setOriginalName(file.getOriginalFilename());
             entity.setStoredName(storedName);
             entity.setContentType(file.getContentType());
@@ -56,12 +54,12 @@ public class FileUploadServiceImpl implements FileUploadService {
 
     @Override
     public List<FileUploadResponse> findByEntity(String entityType, Long entityId) {
-        return fileUploadMapper.findByEntity(entityType, entityId, TenantContext.getTenantId());
+        return fileUploadMapper.findByEntity(entityType, entityId);
     }
 
     @Override
     public List<FileUploadResponse> findAll() {
-        return fileUploadMapper.findAll(TenantContext.getTenantId());
+        return fileUploadMapper.findAll();
     }
 
     @Override

@@ -4,7 +4,6 @@ import com.template.dto.PageResult;
 import com.template.dto.approval.ApprovalRequestResponse;
 import com.template.entity.approval.ApprovalRequest;
 import com.template.mapper.approval.ApprovalRequestMapper;
-import com.template.tenant.TenantContext;
 import com.template.util.SecurityUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -23,15 +22,14 @@ public class ApprovalServiceImpl implements ApprovalService {
     @Transactional(readOnly = true)
     public PageResult<ApprovalRequestResponse> findAll(String keyword, int page, int size) {
         int offset = (page - 1) * size;
-        Long tenantId = TenantContext.getTenantId();
-        List<ApprovalRequestResponse> data = approvalRequestMapper.findPage(keyword, tenantId, offset, size);
-        int total = approvalRequestMapper.countPage(keyword, tenantId);
+        List<ApprovalRequestResponse> data = approvalRequestMapper.findPage(keyword, offset, size);
+        int total = approvalRequestMapper.countPage(keyword);
         return PageResult.of(data, total, page, size);
     }
 
     @Override
     public List<ApprovalRequestResponse> findPending() {
-        return approvalRequestMapper.findPending(TenantContext.getTenantId());
+        return approvalRequestMapper.findPending();
     }
 
     @Override
@@ -68,7 +66,6 @@ public class ApprovalServiceImpl implements ApprovalService {
     @Transactional
     public Long submit(String entityType, Long entityId, String requestType, String requestData) {
         ApprovalRequest req = new ApprovalRequest();
-        req.setTenantId(TenantContext.getTenantId());
         req.setEntityType(entityType);
         req.setEntityId(entityId);
         req.setRequestType(requestType);

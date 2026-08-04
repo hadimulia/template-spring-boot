@@ -18,29 +18,24 @@
         SELECT id, user_id, title, message, type, is_read, link, created_by, created_date
         FROM notifications
         WHERE user_id = #{userId}
-        <if test="tenantId != null">AND tenant_id = #{tenantId}</if>
         ORDER BY created_date DESC
         LIMIT #{limit} OFFSET #{offset}
     </select>
 
     <select id="countByUserId" resultType="int">
         SELECT COUNT(*) FROM notifications WHERE user_id = #{userId}
-        <if test="tenantId != null">AND tenant_id = #{tenantId}</if>
     </select>
 
     <select id="countUnreadByUserId" resultType="int">
         SELECT COUNT(*) FROM notifications WHERE user_id = #{userId} AND is_read = FALSE
-        <if test="tenantId != null">AND tenant_id = #{tenantId}</if>
     </select>
 
     <update id="markAsRead">
         UPDATE notifications SET is_read = TRUE WHERE id = #{id} AND user_id = #{userId}
-        <if test="tenantId != null">AND tenant_id = #{tenantId}</if>
     </update>
 
     <update id="markAllAsRead">
         UPDATE notifications SET is_read = TRUE WHERE user_id = #{userId} AND is_read = FALSE
-        <if test="tenantId != null">AND tenant_id = #{tenantId}</if>
     </update>
 
 </mapper>
