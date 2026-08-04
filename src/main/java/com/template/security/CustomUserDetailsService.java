@@ -49,7 +49,6 @@ import lombok.RequiredArgsConstructor;
 public class CustomUserDetailsService {
 
     public static final String SYSTEM_CODE = "system";
-    public static final String SYSTEM_DB_NAME = "sims_system";
 
     private final UserMapper userMapper;
     private final RoleMapper roleMapper;
@@ -119,7 +118,7 @@ public class CustomUserDetailsService {
                 throw new LockedException("Account is locked");
             }
 
-            return buildDetails(user.getId(), null, SYSTEM_CODE, SYSTEM_DB_NAME, user);
+            return buildDetails(user.getId(), null, SYSTEM_CODE, SYSTEM_CODE, user);
         } finally {
             TenantContext.clear();
         }
