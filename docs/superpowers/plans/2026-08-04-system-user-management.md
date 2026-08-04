@@ -637,6 +637,6 @@ git commit -m "chore: verification fixups"
 ## Self-Review Notes
 
 - **Spec coverage:** SystemUserService (T1), SystemUserController (T2), templates/picker (T3), E2E (T4). All spec sections map to tasks.
-- **Type consistency:** `SystemUserService.listBySchool/create/update/delete` signatures used identically in T1 and T2. `TenantContext.setRoutingKey/setTenantId/clear` used consistently. `SchoolResponse.getStatus()` used in T2 Step 2 — flagged for verification against the DTO.
+- **Type consistency:** `SystemUserService.listBySchool/create/update/delete` signatures used identically in T1 and T2. `TenantContext.setRoutingKey/setTenantId/clear` used consistently. `SchoolResponse.getStatus()` confirmed present (`@Data` + `status` field).
 - **Note:** `schoolMapper.findAll(null, 0, 1000)` for the picker — the registry `SchoolMapper.findAll(keyword, offset, limit)` signature. `RoleService.findAll()` returns `List<RoleResponse>` with `getId()`/`getName()`.
 - **Note:** T3 reuses the existing templates with conditional system blocks; the single-form `th:action` approach avoids duplicating fields.
