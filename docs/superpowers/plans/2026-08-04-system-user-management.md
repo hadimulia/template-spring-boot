@@ -634,6 +634,14 @@ git commit -m "chore: verification fixups"
 
 ---
 
+## Execution Notes
+
+- **`@Transactional` conflicts with in-method routing.** A `@Transactional` proxy opens its connection before the method body runs, so `TenantContext.setRoutingKey` set inside the method is ignored (queries hit the old realm). Fixed by using `TransactionTemplate` (injected `PlatformTransactionManager`) and calling `tx.execute(...)` after setting the routing key.
+- **Thymeleaf literal gotchas** fixed during E2E: `th:text="-- Select school --"` fails parse (treats `--` as comment/expression); `${s.code} - ${s.name}` fails parse (treats `-` as subtraction). Both replaced with i18n key / `|...|` literal expressions.
+- **Empty-list view** needed a real `Pagination` object (not `null`) because `fragments/pagination` reads `pagination.totalPages`.
+- **Roles in the system form** come from `roleService.findAll()` which reads the system realm's roles (only `SYSTEM`), not the target school's roles. Acceptable for now — the school's roles could be listed via the routing key in a later refinement.
+- All E2E scenarios passed (see Task 4); the working tree is clean except `.claude/settings.local.json`.
+
 ## Self-Review Notes
 
 - **Spec coverage:** SystemUserService (T1), SystemUserController (T2), templates/picker (T3), E2E (T4). All spec sections map to tasks.
