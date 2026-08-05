@@ -696,6 +696,14 @@ git commit -m "chore: verification fixups"
 
 ---
 
+## Execution Notes
+
+- **Two extra system migrations were needed during E2E**, because `sims_system`'s V1 tables lacked columns the shared school mappers expect:
+  - `V5__add_menu_i18n_key.sql` — `menus.i18n_key` (MenuMapper queries `pm.i18n_key`); also added `sidebar.schoolUser`/`sidebar.systemUser` i18n keys.
+  - `V6__add_audit_columns.sql` — audit/soft-delete columns (`deleted`, `version`, `updated_by`, `updated_date`, `created_date`) on `user_roles`, `role_permissions`, `role_menus`, `users`, `roles`, `permissions`, `menus`.
+- `SystemRoleController` needed `PermissionService` + `MenuService` injected to render `allPermissions`/`allMenus` in the role form (matches the school `RoleController`).
+- Verified E2E: system sidebar shows all 6 menus; role create (MANAGER), permission create (REPORT_VIEW), menu create (Dashboard System), system-user create + login (`system`/`ops`) all work.
+
 ## Self-Review Notes
 
 - **Spec coverage:** migration (T1), system-user service (T2), system-user routes (T3), role/permission/menu controllers (T4), templates (T5), E2E (T6).
