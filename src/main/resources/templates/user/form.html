@@ -17,8 +17,17 @@
 
     <div class="card">
         <div class="card-body">
-            <form th:action="${user.id != null ? '/users/' + user.id : '/users'}"
+            <div th:if="${#authorization.expression('hasRole(''SYSTEM'')')}" class="mb-3">
+                <label class="form-label" th:text="#{user.school}">School</label>
+                <select class="form-select" disabled>
+                    <option th:each="s : ${schools}" th:value="${s.id}"
+                            th:selected="${s.id == selectedSchoolId}"
+                            th:text="${s.code} - ${s.name}"></option>
+                </select>
+            </div>
+            <form th:action="${#authorization.expression('hasRole(''SYSTEM'')') ? (user.id != null ? '/system/users/' + user.id : '/system/users') : (user.id != null ? '/users/' + user.id : '/users')}"
                   method="post" th:object="${user}">
+				<input th:if="${#authorization.expression('hasRole(''SYSTEM'')')}" type="hidden" name="schoolId" th:value="${selectedSchoolId}">
 				<input type="text" class="form-control" th:classappend="${#fields.hasErrors('id')} ? 'is-invalid'" id="id" th:field="*{id}" hidden="true">
 
                 <div class="mb-3">

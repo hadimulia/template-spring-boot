@@ -18,12 +18,26 @@
             </ul>
             <a th:if="${#authorization.expression('hasAuthority(''USER_CREATE'')')}"
                th:href="@{/import/users}" class="btn btn-outline-primary"><i class="bi bi-upload"></i> <span th:text="#{page.import}">Import</span></a>
-            <a th:if="${#authorization.expression('hasAuthority(''USER_CREATE'')')}"
+            <a th:if="${#authorization.expression('hasRole(''SYSTEM'')')}"
+               th:href="@{/system/users/new(schoolId=${selectedSchoolId})}"
+               class="btn btn-primary"><i class="bi bi-plus-lg"></i> <span th:text="#{user.add}">Add User</span></a>
+            <a th:if="${#authorization.expression('hasRole(''SYSTEM'')') == false and #authorization.expression('hasAuthority(''USER_CREATE'')')}"
                th:href="@{/users/new}" class="btn btn-primary"><i class="bi bi-plus-lg"></i> <span th:text="#{user.add}">Add User</span></a>
         </div>
     </div>
     <span id="flashSuccess" th:if="${successMessage}" th:text="${successMessage}" class="d-none"></span>
     <span id="flashError" th:if="${errorMessage}" th:text="${errorMessage}" class="d-none"></span>
+    <div th:if="${#authorization.expression('hasRole(''SYSTEM'')')}" class="mb-3">
+        <form th:action="@{/system/users}" method="get" class="input-group">
+            <select name="schoolId" class="form-select" required>
+                <option value="" th:text="-- Select school --"></option>
+                <option th:each="s : ${schools}" th:value="${s.id}"
+                        th:selected="${s.id == selectedSchoolId}"
+                        th:text="${s.code} - ${s.name}"></option>
+            </select>
+            <button type="submit" class="btn btn-primary" th:text="#{page.open}">Open</button>
+        </form>
+    </div>
     <div class="mb-3 input-group">
         <input type="text" id="searchKeyword" class="form-control"
                th:value="${keyword}" th:placeholder="#{user.search.placeholder}">
@@ -59,10 +73,22 @@
                             <span th:unless="${user.enabled}" class="badge bg-danger" th:text="#{user.inactive}">Inactive</span>
                         </td>
                         <td>
-                            <a th:if="${#authorization.expression('hasAuthority(''USER_EDIT'')')}"
+                            <a th:if="${#authorization.expression('hasRole(''SYSTEM'')')}"
+                               th:href="@{/system/users/{id}/edit(id=${user.id}, schoolId=${selectedSchoolId})}"
+                               class="btn btn-sm btn-warning"><i class="bi bi-pencil"></i></a>
+                            <a th:if="${#authorization.expression('hasRole(''SYSTEM'')') == false and #authorization.expression('hasAuthority(''USER_EDIT'')')}"
                                th:href="@{/users/{id}/edit(id=${user.id})}"
                                class="btn btn-sm btn-warning"><i class="bi bi-pencil"></i></a>
-                            <form th:if="${#authorization.expression('hasAuthority(''USER_DELETE'')')}"
+                            <form th:if="${#authorization.expression('hasRole(''SYSTEM'')')}"
+                                  th:action="@{/system/users/{id}/delete(id=${user.id}, schoolId=${selectedSchoolId})}"
+                                  method="post" class="d-inline">
+                                <button type="button" class="btn btn-sm btn-danger"
+                                        data-bs-toggle="modal" data-bs-target="#confirmModal"
+                                        th:data-modal-title="#{confirm.delete.user.title}"
+                                        th:data-modal-body="#{confirm.delete.user.body}"
+                                        th:data-modal-btn="#{modal.confirm.delete}"><i class="bi bi-trash"></i></button>
+                            </form>
+                            <form th:if="${#authorization.expression('hasRole(''SYSTEM'')') == false and #authorization.expression('hasAuthority(''USER_DELETE'')')}"
                                   th:action="@{/users/{id}/delete(id=${user.id})}"
                                   method="post" class="d-inline">
                                 <button type="button" class="btn btn-sm btn-danger"
