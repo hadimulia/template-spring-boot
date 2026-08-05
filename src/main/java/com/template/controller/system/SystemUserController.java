@@ -60,7 +60,7 @@ public class SystemUserController {
         if (schoolId == null) {
             addSchoolPicker(model, null);
             model.addAttribute("users", List.of());
-            model.addAttribute("pagination", PageResult.of(List.of(), 0, 1, size));
+            model.addAttribute("pagination", PageResult.of(List.of(), 0, 1, size).getPagination());
             model.addAttribute("keyword", keyword);
             return "user/list";
         }
