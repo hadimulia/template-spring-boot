@@ -10,4 +10,9 @@ public interface SystemUserService {
     void create(Long schoolId, UserRequest request);
     void update(Long schoolId, Long userId, UserUpdateRequest request);
     void delete(Long schoolId, Long userId);
+
+    PageResult<UserResponse> listSystemUsers(String keyword, int page, int size);
+    void createSystemUser(UserRequest request);
+    void updateSystemUser(Long userId, UserUpdateRequest request);
+    void deleteSystemUser(Long userId);
 }

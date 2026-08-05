@@ -236,4 +236,112 @@ public class SystemUserServiceImpl implements SystemUserService {
             TenantContext.clear();
         }
     }
+
+    @Override
+    public PageResult<UserResponse> listSystemUsers(String keyword, int page, int size) {
+        return tx.execute(status -> {
+            int offset = (page - 1) * size;
+            List<UserResponse> data = userMapper.findAll(keyword, offset, size);
+            int total = userMapper.countAll(keyword);
+            for (UserResponse user : data) {
+                List<Long> roleIds = userRoleMapper.findRoleIdsByUserId(user.getId());
+                List<String> roleNames = roleIds.stream()
+                        .map(roleId -> roleMapper.selectByPrimaryKey(roleId))
+                        .filter(r -> r != null && !Boolean.TRUE.equals(r.getDeleted()))
+                        .map(r -> r.getName())
+                        .collect(Collectors.toList());
+                user.setRoles(roleNames);
+            }
+            return PageResult.of(data, total, page, size);
+        });
+    }
+
+    @Override
+    public void createSystemUser(UserRequest request) {
+        tx.executeWithoutResult(status -> {
+            if (userMapper.findByUsername(request.getUsername()) != null) {
+                throw new com.template.exception.BusinessException(
+                        "Username already exists: " + request.getUsername(),
+                        "/system/users/system/new");
+            }
+            User user = new User();
+            user.setUsername(request.getUsername());
+            user.setPassword(passwordEncoder.encode(request.getPassword()));
+            user.setFullname(request.getFullname());
+            user.setEmail(request.getEmail());
+            user.setEnabled(true);
+            user.setAccountLocked(false);
+            user.setLoginAttempts(0);
+            user.setCreatedBy(SecurityUtils.getCurrentUsername());
+            user.setCreatedDate(LocalDateTime.now());
+            user.setDeleted(false);
+            user.setVersion(0);
+            userMapper.insert(user);
+
+            if (request.getRoleIds() != null) {
+                for (Long roleId : request.getRoleIds()) {
+                    UserRole userRole = new UserRole();
+                    userRole.setUserId(user.getId());
+                    userRole.setRoleId(roleId);
+                    userRole.setCreatedBy(SecurityUtils.getCurrentUsername());
+                    userRole.setCreatedDate(LocalDateTime.now());
+                    userRoleMapper.insert(userRole);
+                }
+            }
+        });
+    }
+
+    @Override
+    public void updateSystemUser(Long userId, UserUpdateRequest request) {
+        tx.executeWithoutResult(status -> {
+            User user = userMapper.selectByPrimaryKey(userId);
+            if (user == null || Boolean.TRUE.equals(user.getDeleted())) {
+                throw new com.template.exception.BusinessException(
+                        "User not found", "/system/users/system");
+            }
+            user.setUsername(request.getUsername());
+            user.setFullname(request.getFullname());
+            user.setEmail(request.getEmail());
+            if (request.getEnabled() != null) {
+                user.setEnabled(request.getEnabled());
+            }
+            if (request.getPassword() != null && !request.getPassword().isEmpty()) {
+                user.setPassword(passwordEncoder.encode(request.getPassword()));
+            }
+            user.setUpdatedBy(SecurityUtils.getCurrentUsername());
+            user.setUpdatedDate(LocalDateTime.now());
+            userMapper.updateByPrimaryKey(user);
+
+            if (request.getRoleIds() != null) {
+                List<Long> existingRoleIds = userRoleMapper.findRoleIdsByUserIdAll(userId);
+                for (Long roleId : existingRoleIds) {
+                    UserRole ur = new UserRole();
+                    ur.setUserId(userId);
+                    ur.setRoleId(roleId);
+                    userRoleMapper.delete(ur);
+                }
+                for (Long roleId : request.getRoleIds()) {
+                    UserRole userRole = new UserRole();
+                    userRole.setUserId(userId);
+                    userRole.setRoleId(roleId);
+                    userRole.setCreatedBy(SecurityUtils.getCurrentUsername());
+                    userRole.setCreatedDate(LocalDateTime.now());
+                    userRoleMapper.insert(userRole);
+                }
+            }
+        });
+    }
+
+    @Override
+    public void deleteSystemUser(Long userId) {
+        tx.executeWithoutResult(status -> {
+            User user = userMapper.selectByPrimaryKey(userId);
+            if (user != null) {
+                user.setDeleted(true);
+                user.setUpdatedBy(SecurityUtils.getCurrentUsername());
+                user.setUpdatedDate(LocalDateTime.now());
+                userMapper.updateByPrimaryKey(user);
+            }
+        });
+    }
 }
