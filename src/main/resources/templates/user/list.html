@@ -33,7 +33,7 @@
                 <option value="" th:text="#{user.selectSchool}"></option>
                 <option th:each="s : ${schools}" th:value="${s.id}"
                         th:selected="${s.id == selectedSchoolId}"
-                        th:text="${s.code} - ${s.name}"></option>
+                        th:text="|${s.code} — ${s.name}|"></option>
             </select>
             <button type="submit" class="btn btn-primary" th:text="#{page.open}">Open</button>
         </form>

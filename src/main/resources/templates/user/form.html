@@ -22,7 +22,7 @@
                 <select class="form-select" disabled>
                     <option th:each="s : ${schools}" th:value="${s.id}"
                             th:selected="${s.id == selectedSchoolId}"
-                            th:text="${s.code} - ${s.name}"></option>
+                            th:text="|${s.code} — ${s.name}|"></option>
                 </select>
             </div>
             <form th:action="${#authorization.expression('hasRole(''SYSTEM'')') ? (user.id != null ? '/system/users/' + user.id : '/system/users') : (user.id != null ? '/users/' + user.id : '/users')}"
