@@ -15,6 +15,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.template.dto.PageResult;
 import com.template.dto.role.RoleRequest;
 import com.template.dto.role.RoleResponse;
+import com.template.service.menu.MenuService;
+import com.template.service.permission.PermissionService;
 import com.template.service.role.RoleService;
 
 import jakarta.validation.Valid;
@@ -25,9 +27,20 @@ import jakarta.validation.Valid;
 public class SystemRoleController {
 
     private final RoleService roleService;
+    private final PermissionService permissionService;
+    private final MenuService menuService;
 
-    public SystemRoleController(RoleService roleService) {
+    public SystemRoleController(RoleService roleService,
+                                PermissionService permissionService,
+                                MenuService menuService) {
         this.roleService = roleService;
+        this.permissionService = permissionService;
+        this.menuService = menuService;
+    }
+
+    private void addFormModel(Model model) {
+        model.addAttribute("allPermissions", permissionService.findAllForSelect());
+        model.addAttribute("allMenus", menuService.findAllMenus());
     }
 
     @GetMapping
@@ -45,14 +58,17 @@ public class SystemRoleController {
     @GetMapping("/new")
     public String form(Model model) {
         model.addAttribute("role", new RoleRequest());
+        addFormModel(model);
         return "system/role/form";
     }
 
     @PostMapping
     public String save(@Valid @ModelAttribute("role") RoleRequest request,
                        BindingResult bindingResult,
+                       Model model,
                        RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
+            addFormModel(model);
             return "system/role/form";
         }
         roleService.create(request);
@@ -66,11 +82,8 @@ public class SystemRoleController {
         if (role == null) {
             return "redirect:/system/roles";
         }
-        RoleRequest form = new RoleRequest();
-        form.setId(role.getId());
-        form.setName(role.getName());
-        form.setDescription(role.getDescription());
-        model.addAttribute("role", form);
+        model.addAttribute("role", role);
+        addFormModel(model);
         return "system/role/form";
     }
 
@@ -78,8 +91,10 @@ public class SystemRoleController {
     public String update(@PathVariable Long id,
                          @Valid @ModelAttribute("role") RoleRequest request,
                          BindingResult bindingResult,
+                         Model model,
                          RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
+            addFormModel(model);
             return "system/role/form";
         }
         roleService.update(id, request);

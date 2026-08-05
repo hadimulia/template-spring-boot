@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/main :: layout}">
+<head><title th:text="#{role.management}">Role Management</title></head>
+<body>
+<div layout:fragment="content">
+    <div th:replace="~{fragments/breadcrumb :: breadcrumb(#{role.title})}"></div>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h4 class="mb-0" th:text="#{role.management}">Role Management</h4>
+        <a th:href="@{/system/roles/new}" class="btn btn-primary"><i class="bi bi-plus-lg"></i> <span th:text="#{role.add}">Add Role</span></a>
+    </div>
+    <span id="flashSuccess" th:if="${successMessage}" th:text="${successMessage}" class="d-none"></span>
+    <span id="flashError" th:if="${errorMessage}" th:text="${errorMessage}" class="d-none"></span>
+    <div class="mb-3 input-group">
+        <input type="text" id="searchKeyword" class="form-control" th:value="${keyword}" th:placeholder="#{role.search.placeholder}">
+        <button type="button" class="btn btn-outline-secondary" id="searchBtn"><i class="bi bi-search"></i> <span th:text="#{page.search}">Search</span></button>
+        <a th:href="@{/system/roles}" class="btn btn-outline-secondary" id="refreshBtn"><i class="bi bi-arrow-clockwise"></i> <span th:text="#{page.refresh}">Refresh</span></a>
+    </div>
+    <div class="card">
+        <div class="card-body p-0">
+            <table class="table table-hover mb-0" id="dataTable">
+                <thead><tr><th>#</th><th th:text="#{role.name}">Name</th><th th:text="#{role.description}">Description</th><th th:text="#{page.actions}">Actions</th></tr></thead>
+                <tbody id="dataRows">
+                    <tr th:each="role, stat : ${roles}">
+                        <td th:text="${(pagination.currentPage - 1) * pagination.pageSize + stat.index + 1}"></td>
+                        <td th:text="${role.name}"></td>
+                        <td th:text="${role.description}"></td>
+                        <td>
+                            <a th:href="@{/system/roles/{id}/edit(id=${role.id})}" class="btn btn-sm btn-warning"><i class="bi bi-pencil"></i></a>
+                            <form th:action="@{/system/roles/{id}/delete(id=${role.id})}" method="post" class="d-inline">
+                                <button type="button" class="btn btn-sm btn-danger"
+                                        data-bs-toggle="modal" data-bs-target="#confirmModal"
+                                        th:data-modal-title="#{confirm.delete.role.title}"
+                                        th:data-modal-body="#{confirm.delete.role.body}"
+                                        th:data-modal-btn="#{modal.confirm.delete}"><i class="bi bi-trash"></i></button>
+                            </form>
+                        </td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(roles)}"><td colspan="4" class="text-center text-muted py-4" th:text="#{role.notfound}">No roles found</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div th:replace="~{fragments/pagination :: pagination}"></div>
+
+<script th:src="@{/js/list-manager.js}"></script>
+</div>
+</html>
