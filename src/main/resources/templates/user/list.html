@@ -30,7 +30,7 @@
     <div th:if="${#authorization.expression('hasRole(''SYSTEM'')')}" class="mb-3">
         <form th:action="@{/system/users}" method="get" class="input-group">
             <select name="schoolId" class="form-select" required>
-                <option value="" th:text="-- Select school --"></option>
+                <option value="" th:text="#{user.selectSchool}"></option>
                 <option th:each="s : ${schools}" th:value="${s.id}"
                         th:selected="${s.id == selectedSchoolId}"
                         th:text="${s.code} - ${s.name}"></option>
