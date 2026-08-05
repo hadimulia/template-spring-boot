@@ -101,7 +101,9 @@ public class SystemUserServiceImpl implements SystemUserService {
         try {
             tx.executeWithoutResult(status -> {
                 if (userMapper.findByUsername(request.getUsername()) != null) {
-                    throw new IllegalArgumentException("Username already exists in this school: " + request.getUsername());
+                    throw new com.template.exception.BusinessException(
+                            "Username already exists in this school: " + request.getUsername(),
+                            "/system/users/new?schoolId=" + schoolId);
                 }
                 User user = new User();
                 user.setUsername(request.getUsername());
@@ -155,7 +157,9 @@ public class SystemUserServiceImpl implements SystemUserService {
             tx.executeWithoutResult(status -> {
                 User user = userMapper.selectByPrimaryKey(userId);
                 if (user == null || Boolean.TRUE.equals(user.getDeleted())) {
-                    throw new IllegalArgumentException("User not found in school " + schoolId);
+                    throw new com.template.exception.BusinessException(
+                            "User not found in school " + schoolId,
+                            "/system/users?schoolId=" + schoolId);
                 }
                 boolean usernameChanged = request.getUsername() != null
                         && !request.getUsername().equals(user.getUsername());

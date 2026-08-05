@@ -67,7 +67,9 @@ public class UserServiceImpl extends GenericServiceImpl<User, Long> implements U
     @Auditable(action = "CREATE", entityType = "USER", description = "#request.username")
     public void create(UserRequest request) {
         if (userMapper.findByUsername(request.getUsername()) != null) {
-            throw new IllegalArgumentException("Username already exists in this school: " + request.getUsername());
+            throw new com.template.exception.BusinessException(
+                    "Username already exists in this school: " + request.getUsername(),
+                    "/users/new");
         }
 
         User user = new User();

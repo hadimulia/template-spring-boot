@@ -15,6 +15,13 @@
         </a>
     </div>
 
+    <div th:if="${errorMessage}" class="alert alert-danger">
+        <i class="bi bi-exclamation-triangle"></i> <span th:text="${errorMessage}"></span>
+    </div>
+    <div th:if="${successMessage}" class="alert alert-success">
+        <i class="bi bi-check-circle"></i> <span th:text="${successMessage}"></span>
+    </div>
+
     <div class="card">
         <div class="card-body">
             <div th:if="${#authorization.expression('hasRole(''SYSTEM'')')}" class="mb-3">
