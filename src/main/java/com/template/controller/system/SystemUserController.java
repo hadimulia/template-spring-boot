@@ -140,4 +140,77 @@ public class SystemUserController {
         redirectAttributes.addFlashAttribute("successMessage", "User deleted from school");
         return "redirect:/system/users?schoolId=" + schoolId;
     }
+
+    @GetMapping("/system")
+    public String listSystemUsers(@RequestParam(defaultValue = "") String keyword,
+                                  @RequestParam(defaultValue = "1") int page,
+                                  @RequestParam(defaultValue = "10") int size,
+                                  Model model) {
+        PageResult<UserResponse> result = systemUserService.listSystemUsers(keyword, page, size);
+        model.addAttribute("users", result.getData());
+        model.addAttribute("pagination", result.getPagination());
+        model.addAttribute("keyword", keyword);
+        return "system/user/list";
+    }
+
+    @GetMapping("/system/new")
+    public String formSystemUser(Model model) {
+        model.addAttribute("user", new UserRequest());
+        model.addAttribute("allRoles", roleService.findAll());
+        return "system/user/form";
+    }
+
+    @PostMapping("/system")
+    public String saveSystemUser(@Valid @ModelAttribute("user") UserRequest request,
+                                 BindingResult bindingResult,
+                                 Model model,
+                                 RedirectAttributes redirectAttributes) {
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("allRoles", roleService.findAll());
+            return "system/user/form";
+        }
+        systemUserService.createSystemUser(request);
+        redirectAttributes.addFlashAttribute("successMessage", "System user created");
+        return "redirect:/system/users/system";
+    }
+
+    @GetMapping("/system/{id}/edit")
+    public String editSystemUser(@PathVariable Long id, Model model) {
+        PageResult<UserResponse> all = systemUserService.listSystemUsers("", 1, 1000);
+        UserResponse found = all.getData().stream().filter(u -> u.getId().equals(id)).findFirst().orElse(null);
+        if (found == null) {
+            return "redirect:/system/users/system";
+        }
+        UserUpdateRequest form = new UserUpdateRequest();
+        form.setId(found.getId());
+        form.setUsername(found.getUsername());
+        form.setFullname(found.getFullname());
+        form.setEmail(found.getEmail());
+        form.setEnabled(found.getEnabled());
+        model.addAttribute("allRoles", roleService.findAll());
+        model.addAttribute("user", form);
+        return "system/user/form";
+    }
+
+    @PostMapping("/system/{id}")
+    public String updateSystemUser(@PathVariable Long id,
+                                   @Valid @ModelAttribute("user") UserUpdateRequest request,
+                                   BindingResult bindingResult,
+                                   Model model,
+                                   RedirectAttributes redirectAttributes) {
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("allRoles", roleService.findAll());
+            return "system/user/form";
+        }
+        systemUserService.updateSystemUser(id, request);
+        redirectAttributes.addFlashAttribute("successMessage", "System user updated");
+        return "redirect:/system/users/system";
+    }
+
+    @PostMapping("/system/{id}/delete")
+    public String deleteSystemUser(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        systemUserService.deleteSystemUser(id);
+        redirectAttributes.addFlashAttribute("successMessage", "System user deleted");
+        return "redirect:/system/users/system";
+    }
 }
