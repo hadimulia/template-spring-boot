@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/main :: layout}">
+<head><title th:text="#{teacher.edit}">Teacher Form</title></head>
+<body>
+<div layout:fragment="content">
+    <div th:replace="~{fragments/breadcrumb :: breadcrumb(#{teacher.management})}"></div>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h4 class="mb-0" th:text="${teacher.id != null} ? #{teacher.edit} : #{teacher.add}">Teacher Form</h4>
+        <a th:href="@{/teachers}" class="btn btn-secondary"><i class="bi bi-arrow-left"></i> <span th:text="#{page.back}">Back</span></a>
+    </div>
+    <div th:if="${errorMessage}" class="alert alert-danger">
+        <i class="bi bi-exclamation-triangle"></i> <span th:text="${errorMessage}"></span>
+    </div>
+    <div class="card">
+        <div class="card-body">
+            <form th:action="${teacher.id != null ? '/teachers/' + teacher.id : '/teachers'}" method="post" th:object="${teacher}">
+                <input type="text" class="form-control" id="id" th:field="*{id}" hidden="true">
+                <div class="mb-3">
+                    <label for="nip" class="form-label" th:text="#{teacher.nip}">NIP <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" th:classappend="${#fields.hasErrors('nip')} ? 'is-invalid'" id="nip" th:field="*{nip}" th:readonly="${teacher.id != null}">
+                    <div class="invalid-feedback" th:errors="*{nip}">Error</div>
+                </div>
+                <div class="mb-3">
+                    <label for="fullname" class="form-label" th:text="#{teacher.fullname}">Full Name <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" th:classappend="${#fields.hasErrors('fullname')} ? 'is-invalid'" id="fullname" th:field="*{fullname}">
+                    <div class="invalid-feedback" th:errors="*{fullname}">Error</div>
+                </div>
+                <div class="mb-3">
+                    <label for="gender" class="form-label" th:text="#{teacher.gender}">Gender</label>
+                    <select class="form-select" id="gender" th:field="*{gender}">
+                        <option value="" th:text="--"></option>
+                        <option value="L" th:text="#{gender.male}">Laki-laki</option>
+                        <option value="P" th:text="#{gender.female}">Perempuan</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="birthDate" class="form-label" th:text="#{teacher.birthDate}">Birth Date</label>
+                    <input type="date" class="form-control" id="birthDate" th:field="*{birthDate}">
+                </div>
+                <div class="mb-3">
+                    <label for="address" class="form-label" th:text="#{teacher.address}">Address</label>
+                    <textarea class="form-control" id="address" rows="2" th:field="*{address}"></textarea>
+                </div>
+                <div class="mb-3">
+                    <label for="phone" class="form-label" th:text="#{teacher.phone}">Phone</label>
+                    <input type="text" class="form-control" id="phone" th:field="*{phone}">
+                </div>
+                <div class="mb-3">
+                    <label for="email" class="form-label" th:text="#{teacher.email}">Email</label>
+                    <input type="email" class="form-control" id="email" th:field="*{email}">
+                </div>
+                <div class="mb-3">
+                    <label for="hireDate" class="form-label" th:text="#{teacher.hireDate}">Hire Date</label>
+                    <input type="date" class="form-control" id="hireDate" th:field="*{hireDate}">
+                </div>
+                <div th:if="${teacher.id == null}" class="mb-3">
+                    <label for="password" class="form-label" th:text="#{user.password}">Password <span class="text-danger">*</span></label>
+                    <input type="password" class="form-control" th:classappend="${#fields.hasErrors('password')} ? 'is-invalid'" id="password" th:field="*{password}">
+                    <div class="invalid-feedback" th:errors="*{password}">Error</div>
+                </div>
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-primary"><i class="bi bi-save"></i> <span th:text="#{page.save}">Save</span></button>
+                    <a th:href="@{/teachers}" class="btn btn-secondary"><i class="bi bi-x-circle"></i> <span th:text="#{page.cancel}">Cancel</span></a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+</html>

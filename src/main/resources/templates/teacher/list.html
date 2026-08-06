@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/main :: layout}">
+<head><title th:text="#{teacher.management}">Teacher Management</title></head>
+<body>
+<div layout:fragment="content">
+    <div th:replace="~{fragments/breadcrumb :: breadcrumb(#{teacher.management})}"></div>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h4 class="mb-0" th:text="#{teacher.management}">Teacher Management</h4>
+        <a th:if="${#authorization.expression('hasAuthority(''TEACHER_CREATE'')')}"
+           th:href="@{/teachers/new}" class="btn btn-primary"><i class="bi bi-plus-lg"></i> <span th:text="#{teacher.add}">Add Teacher</span></a>
+    </div>
+    <span id="flashSuccess" th:if="${successMessage}" th:text="${successMessage}" class="d-none"></span>
+    <span id="flashError" th:if="${errorMessage}" th:text="${errorMessage}" class="d-none"></span>
+    <div class="mb-3 input-group">
+        <input type="text" id="searchKeyword" class="form-control" th:value="${keyword}" th:placeholder="#{teacher.search.placeholder}">
+        <button type="button" class="btn btn-outline-secondary" id="searchBtn"><i class="bi bi-search"></i> <span th:text="#{page.search}">Search</span></button>
+        <a th:href="@{/teachers}" class="btn btn-outline-secondary" id="refreshBtn"><i class="bi bi-arrow-clockwise"></i> <span th:text="#{page.refresh}">Refresh</span></a>
+    </div>
+    <div class="card">
+        <div class="card-body p-0">
+            <table class="table table-hover mb-0" id="dataTable">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th th:text="#{teacher.nip}">NIP</th>
+                        <th th:text="#{teacher.fullname}">Full Name</th>
+                        <th th:text="#{teacher.gender}">Gender</th>
+                        <th th:text="#{teacher.phone}">Phone</th>
+                        <th th:text="#{teacher.email}">Email</th>
+                        <th th:text="#{page.actions}">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="dataRows">
+                    <tr th:each="teacher, stat : ${teachers}">
+                        <td th:text="${(pagination.currentPage - 1) * pagination.pageSize + stat.index + 1}"></td>
+                        <td th:text="${teacher.nip}"></td>
+                        <td th:text="${teacher.fullname}"></td>
+                        <td th:text="${teacher.gender}"></td>
+                        <td th:text="${teacher.phone}"></td>
+                        <td th:text="${teacher.email}"></td>
+                        <td>
+                            <a th:if="${#authorization.expression('hasAuthority(''TEACHER_EDIT'')')}"
+                               th:href="@{/teachers/{id}/edit(id=${teacher.id})}"
+                               class="btn btn-sm btn-warning"><i class="bi bi-pencil"></i></a>
+                            <form th:if="${#authorization.expression('hasAuthority(''TEACHER_DELETE'')')}"
+                                  th:action="@{/teachers/{id}/delete(id=${teacher.id})}"
+                                  method="post" class="d-inline">
+                                <button type="button" class="btn btn-sm btn-danger"
+                                        data-bs-toggle="modal" data-bs-target="#confirmModal"
+                                        th:data-modal-title="#{confirm.delete.teacher.title}"
+                                        th:data-modal-body="#{confirm.delete.teacher.body}"
+                                        th:data-modal-btn="#{modal.confirm.delete}"><i class="bi bi-trash"></i></button>
+                            </form>
+                        </td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(teachers)}">
+                        <td colspan="7" class="text-center text-muted py-4" th:text="#{teacher.notfound}">No teachers found</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div th:replace="~{fragments/pagination :: pagination}"></div>
+
+<script th:src="@{/js/list-manager.js}"></script>
+</div>
+</html>
