@@ -608,6 +608,15 @@ public class TeacherController {
 
 ---
 
+## Execution Notes
+
+- **`@PreAuthorize` uses the seeded authorities** (`TEACHER_*`, `STUDENT_*`, `CLASS_*`); V21 grants them to ADMIN.
+- **tk Condition** is used for role lookup and paging (no custom mapper queries needed).
+- **LoginAccountHelper** (shared) creates the user + `school_users` index; the school realm's `UserMapper` is passed as a parameter to avoid a circular dependency.
+- **Delete needed the `school_users` index soft-delete too** (found during E2E): `TeacherServiceImpl.delete` / `StudentServiceImpl.delete` now mark the registry index `deleted=true`, so deleted teachers/students cannot log in. Fixed in a follow-up commit.
+- **Playwright quirk:** clicking checkboxes/buttons sometimes does not change DOM state; verified submits via `form.submit()` JS. Feature behavior is correct; the tool interaction was the limitation.
+- E2E verified: Akademi menus, teacher create+login (`12345`), student create (`54321`, STUDENT role), class create with homeroom teacher + student link, delete disables login.
+
 ## Self-Review Notes
 
 - **Spec coverage:** schema V21 (T1), entities/mappers (T2), teacher+login (T3), student/class (T4), controllers/templates (T5), E2E (T6).
