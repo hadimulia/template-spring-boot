@@ -18,6 +18,7 @@ import com.template.mapper.academic.StudentMapper;
 import com.template.mapper.role.RoleMapper;
 import com.template.mapper.user.UserMapper;
 import com.template.mapper.user.UserRoleMapper;
+import com.template.registry.mapper.SchoolUserMapper;
 import com.template.service.generic.GenericServiceImpl;
 import com.template.service.system.LoginAccountHelper;
 import com.template.util.SecurityUtils;
@@ -32,16 +33,19 @@ public class StudentServiceImpl extends GenericServiceImpl<Student, Long> implem
     private final UserMapper userMapper;
     private final UserRoleMapper userRoleMapper;
     private final RoleMapper roleMapper;
+    private final SchoolUserMapper schoolUserMapper;
     private final LoginAccountHelper loginAccountHelper;
 
     public StudentServiceImpl(StudentMapper studentMapper, UserMapper userMapper,
                               UserRoleMapper userRoleMapper, RoleMapper roleMapper,
+                              SchoolUserMapper schoolUserMapper,
                               LoginAccountHelper loginAccountHelper) {
         super(studentMapper);
         this.studentMapper = studentMapper;
         this.userMapper = userMapper;
         this.userRoleMapper = userRoleMapper;
         this.roleMapper = roleMapper;
+        this.schoolUserMapper = schoolUserMapper;
         this.loginAccountHelper = loginAccountHelper;
     }
 
@@ -141,6 +145,18 @@ public class StudentServiceImpl extends GenericServiceImpl<Student, Long> implem
                 user.setUpdatedBy(SecurityUtils.getCurrentUsername());
                 user.setUpdatedDate(LocalDateTime.now());
                 userMapper.updateByPrimaryKey(user);
+            }
+        }
+
+        Long schoolId = SecurityUtils.getCurrentSchoolId();
+        if (schoolId != null && student.getUserId() != null) {
+            com.template.entity.registry.SchoolUser index =
+                    schoolUserMapper.findByUserIdAndSchool(student.getUserId(), schoolId);
+            if (index != null) {
+                index.setDeleted(true);
+                index.setUpdatedBy(SecurityUtils.getCurrentUsername());
+                index.setUpdatedDate(LocalDateTime.now());
+                schoolUserMapper.updateByPrimaryKey(index);
             }
         }
     }
